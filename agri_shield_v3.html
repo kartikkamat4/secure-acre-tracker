@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --navy:#0a1628;--navy2:#0f2040;--navy3:#162d52;--navy4:#1e3a6e;
+    --accent:#1d9e75;--accent2:#0f6e56;--accent-glow:#1d9e7522;
+    --danger:#e24b4a;--danger-bg:#fcebeb;--warn:#ef9f27;--warn-bg:#faeeda;
+    --info:#378add;--info-bg:#e6f1fb;
+    --text:#e8edf5;--text2:#9daec4;--text3:#5f7191;
+    --border:#1e3a6e;--border2:#243d6e;
+    --card:#0f1e38;--card2:#122040;
+    --font-head:'Georgia',serif;
+    --radius:8px;--radius-lg:12px;
+  }
+  body{background:var(--navy);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+  
+  /* Layout */
+  .app{display:flex;height:100vh;overflow:hidden}
+  .sidebar{width:220px;background:var(--navy2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .3s}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{background:var(--navy2);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .content{flex:1;overflow-y:auto;padding:24px;background:var(--navy)}
+  
+  /* Sidebar */
+  .logo-area{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  .logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+  .logo-text{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
+  .logo-sub{font-size:10px;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
+  .nav-section{padding:12px 0}
+  .nav-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 16px 4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;border-left:3px solid transparent;user-select:none}
+  .nav-item:hover{background:var(--navy3);color:var(--text)}
+  .nav-item.active{background:var(--accent-glow);color:var(--accent);border-left-color:var(--accent)}
+  .nav-item i{font-size:17px;width:18px;text-align:center}
+  .nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:600}
+  
+  /* Topbar */
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .page-title{font-size:16px;font-weight:600;color:var(--text)}
+  .breadcrumb{font-size:12px;color:var(--text3)}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .top-btn{background:var(--navy3);border:1px solid var(--border);color:var(--text2);padding:7px 10px;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;transition:all .15s}
+  .top-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .user-chip{display:flex;align-items:center;gap:8px;background:var(--navy3);border:1px solid var(--border2);padding:5px 10px;border-radius:20px;cursor:pointer}
+  .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+  .role-badge{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+  
+  /* Cards */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .card-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:7px}
+  .card-title i{font-size:16px}
+  
+  /* Stat cards */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden}
+  .stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 var(--radius-lg) 0 60px;opacity:.12}
+  .stat-card.green::before{background:var(--accent)}
+  .stat-card.red::before{background:var(--danger)}
+  .stat-card.blue::before{background:var(--info)}
+  .stat-card.warn::before{background:var(--warn)}
+  .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .stat-value{font-size:28px;font-weight:700;font-family:var(--font-head);line-height:1;margin-bottom:6px}
+  .stat-value.green{color:var(--accent)}
+  .stat-value.red{color:var(--danger)}
+  .stat-value.blue{color:var(--info)}
+  .stat-value.warn{color:var(--warn)}
+  .stat-delta{font-size:11px;color:var(--text3)}
+  .stat-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.3}
+  
+  /* Tables */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{padding:10px 14px;text-align:left;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);font-weight:500}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+  tbody tr:hover{background:var(--card2)}
+  tbody tr:last-child td{border-bottom:none}
+  
+  /* Badges */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600}
+  .badge-green{background:#1d9e7522;color:var(--accent)}
+  .badge-red{background:#e24b4a22;color:var(--danger)}
+  .badge-warn{background:#ef9f2722;color:var(--warn)}
+  .badge-blue{background:#378add22;color:var(--info)}
+  .badge-gray{background:#1e3a6e;color:var(--text2)}
+  
+  /* Alert items */
+  .alert-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--card2);border-radius:var(--radius);margin-bottom:8px;border-left:3px solid transparent;transition:all .2s}
+  .alert-item.critical{border-left-color:var(--danger)}
+  .alert-item.warning{border-left-color:var(--warn)}
+  .alert-item.info{border-left-color:var(--info)}
+  .alert-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .alert-icon.critical{background:#e24b4a22;color:var(--danger)}
+  .alert-icon.warning{background:#ef9f2722;color:var(--warn)}
+  .alert-icon.info{background:#378add22;color:var(--info)}
+  .alert-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+  .alert-desc{font-size:12px;color:var(--text2);line-height:1.5}
+  .alert-time{font-size:11px;color:var(--text3);margin-top:4px}
+  
+  /* Grid layouts */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  
+  /* Mini bar chart */
+  .mini-chart{display:flex;align-items:flex-end;gap:4px;height:60px;padding-top:8px}
+  .bar{flex:1;background:var(--accent);border-radius:3px 3px 0 0;opacity:.7;transition:opacity .2s;cursor:pointer}
+  .bar:hover{opacity:1}
+  .bar.danger{background:var(--danger)}
+  .bar.warn{background:var(--warn)}
+  
+  /* Activity timeline */
+  .timeline-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .timeline-item:last-child{border-bottom:none}
+  .timeline-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .timeline-content{flex:1;min-width:0}
+  .timeline-title{font-size:13px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .timeline-meta{font-size:11px;color:var(--text3)}
+  
+  /* Search bar */
+  .search-bar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:0 12px;height:36px}
+  .search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:13px;flex:1;min-width:0}
+  .search-bar input::placeholder{color:var(--text3)}
+  .search-bar i{color:var(--text3);font-size:16px}
+  
+  /* Progress bar */
+  .progress-wrap{margin-bottom:12px}
+  .progress-label{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
+  .progress-label span:first-child{color:var(--text2)}
+  .progress-label span:last-child{color:var(--text)}
+  .progress-bar{height:6px;background:var(--navy3);border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;transition:width .8s ease}
+  
+  /* Integrity badge */
+  .integrity-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}
+  .integrity-ok{background:var(--accent-glow);border:1px solid var(--accent2);color:var(--accent)}
+  .integrity-fail{background:#e24b4a15;border:1px solid var(--danger);color:var(--danger)}
+  
+  /* Heatmap cells */
+  .heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+  .heat-cell{height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;cursor:pointer;transition:transform .1s}
+  .heat-cell:hover{transform:scale(1.1)}
+  
+  /* Btn */
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;border:none;transition:all .15s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent2)}
+  .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-danger{background:var(--danger);color:#fff}
+  
+  /* Filter row */
+  .filter-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .filter-select{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:7px 10px;border-radius:var(--radius);font-size:13px;outline:none;cursor:pointer}
+  .filter-select:focus{border-color:var(--accent)}
+  
+  /* Modal overlay */
+  .modal-overlay{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px)}
+  .modal{background:var(--navy2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:480px;max-width:90vw;max-height:90vh;overflow-y:auto}
+  .modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+  .modal-close{cursor:pointer;color:var(--text3);font-size:20px}
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px}
+  .form-input{width:100%;background:var(--navy);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:13px;outline:none}
+  .form-input:focus{border-color:var(--accent)}
+  .change-preview{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin:12px 0}
+  .change-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+  .change-old{color:var(--danger);text-decoration:line-through}
+  .change-new{color:var(--accent)}
+  .warn-box{background:#ef9f2715;border:1px solid var(--warn);border-radius:var(--radius);padding:10px 12px;margin:12px 0;font-size:12px;color:var(--warn);display:flex;align-items:flex-start;gap:8px}
+  
+  /* Notification dot */
+  .notif-dot{position:relative}
+  .notif-dot::after{content:'';position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--navy2)}
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+  
+  /* Tabs */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+  .tab{padding:10px 16px;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+  .tab:hover{color:var(--text2)}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+  
+  /* Input with icon */
+  .input-icon{position:relative}
+  .input-icon i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px}
+  .input-icon input{padding-left:34px}
+  
+  /* Pagination */
+  .pagination{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+  .page-info{font-size:12px;color:var(--text3)}
+  .page-btns{display:flex;gap:4px}
+  .page-btn{width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
+  .page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .page-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+  /* Screen sections hidden/shown */
+  .screen{display:none}
+  .screen.active{display:block}
+  
+  /* Login */
+  .login-wrap{min-height:100vh;background:var(--navy);display:flex;align-items:center;justify-content:center}
+  .login-card{background:var(--navy2);border:1px solid var(--border2);border-radius:16px;padding:40px;width:420px;max-width:95vw}
+  .login-logo{text-align:center;margin-bottom:28px}
+  .login-logo-icon{width:56px;height:56px;background:var(--accent);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin-bottom:12px}
+  .login-logo h1{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--text)}
+  .login-logo p{font-size:12px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+  .login-secure{display:flex;align-items:center;gap:6px;background:var(--accent-glow);border:1px solid var(--accent2);border-radius:var(--radius);padding:8px 12px;margin-bottom:20px;font-size:12px;color:var(--accent)}
+  .mfa-box{display:none;background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-top:8px;text-align:center}
+  .otp-inputs{display:flex;gap:8px;justify-content:center;margin:12px 0}
+  .otp-input{width:44px;height:52px;background:var(--navy2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:20px;font-weight:700;text-align:center;outline:none}
+  .otp-input:focus{border-color:var(--accent)}
+  
+  /* Sidebar user */
+  .sidebar-user{padding:12px 14px;border-top:1px solid var(--border);margin-top:auto;display:flex;align-items:center;gap:8px}
+  .sidebar-user-name{font-size:12px;color:var(--text);font-weight:500}
+  .sidebar-user-role{font-size:10px;color:var(--accent)}
+
+  /* Toast notifications */
+  #toastContainer{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+  .toast{background:var(--navy2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;min-width:280px;max-width:360px;pointer-events:all;animation:toastIn .3s ease;box-shadow:0 8px 24px #0006}
+  .toast.removing{animation:toastOut .3s ease forwards}
+  @keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+  @keyframes toastOut{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
+  .toast-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .toast-success .toast-icon{background:var(--accent-glow);color:var(--accent)}
+  .toast-error .toast-icon{background:#e24b4a22;color:var(--danger)}
+  .toast-warn .toast-icon{background:#ef9f2722;color:var(--warn)}
+  .toast-info .toast-icon{background:#378add22;color:var(--info)}
+  .toast-msg{flex:1;font-size:12px;color:var(--text);line-height:1.4}
+  .toast-close{color:var(--text3);cursor:pointer;font-size:15px;flex-shrink:0}
+
+  /* Skeleton loader */
+  .skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* Command Center */
+  .cmd-threat-level{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:16px}
+  .threat-elevated{background:#ef9f2720;border:1px solid var(--warn);color:var(--warn)}
+  .threat-critical{background:#e24b4a20;border:1px solid var(--danger);color:var(--danger)}
+  .threat-low{background:var(--accent-glow);border:1px solid var(--accent2);color:var(--accent)}
+  .live-feed-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;animation:feedIn .4s ease}
+  @keyframes feedIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  .live-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+  .cmd-metric{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+  .cmd-metric-val{font-size:26px;font-weight:700;font-family:var(--font-head)}
+  .cmd-metric-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+  .cmd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+  /* Risk score */
+  .risk-ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+  .risk-score-label{position:absolute;font-size:20px;font-weight:700;font-family:var(--font-head)}
+
+  /* Diff table */
+  .diff-table th{background:var(--navy3)}
+  .diff-old{background:#e24b4a15;color:var(--danger)}
+  .diff-new{background:#1d9e7515;color:var(--accent)}
+
+  /* Geo monitor */
+  .geo-event{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--card2);border-radius:var(--radius);margin-bottom:8px;border-left:3px solid var(--warn)}
+
+  /* Incident panel */
+  .incident-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;border:1px solid;transition:all .15s}
+  .incident-btn-red{background:#e24b4a15;border-color:var(--danger);color:var(--danger)}
+  .incident-btn-red:hover{background:var(--danger);color:#fff}
+  .incident-btn-warn{background:#ef9f2715;border-color:var(--warn);color:var(--warn)}
+  .incident-btn-warn:hover{background:var(--warn);color:#fff}
+  .incident-btn-blue{background:#378add15;border-color:var(--info);color:var(--info)}
+  .incident-btn-blue:hover{background:var(--info);color:#fff}
+
+  /* Case management */
+  .case-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+  .case-id{font-family:monospace;font-size:12px;color:var(--accent);font-weight:600}
+
+  /* AI Risk breakdown */
+  .risk-factor{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+  .risk-factor:last-child{border-bottom:none}
+
+  /* Digital signature */
+  .sig-box{background:var(--navy);border:1px solid var(--accent2);border-radius:var(--radius);padding:12px;font-family:monospace;font-size:11px;color:var(--accent)}
+
+  /* System health */
+  .health-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .health-row:last-child{border-bottom:none}
+  .health-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .health-ok{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+  .health-warn{background:var(--warn);box-shadow:0 0 6px var(--warn)}
+  .health-fail{background:var(--danger);box-shadow:0 0 6px var(--danger)}
+
+  /* Farmer panel */
+  .farmer-notif{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+  .farmer-notif:last-child{border-bottom:none}
+  
+  /* Sidebar collapse for mobile */
+  @media(max-width:768px){
+    .sidebar{width:0;overflow:hidden;position:absolute;z-index:200;height:100vh}
+    .sidebar.open{width:220px}
+    .main{width:100%}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .grid-3{grid-template-columns:1fr}
+    .cmd-grid{grid-template-columns:1fr 1fr}
+    .topbar-left .mob-menu{display:flex}
+  }
+  .mob-menu{display:none;align-items:center;justify-content:center;width:32px;height:32px;cursor:pointer;color:var(--text2);font-size:20px}
+  
+  /* Loading spinner */
+  .spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="toastContainer"></div>
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="ti ti-shield-check"></i></div>
+      <h1>AgriShield</h1>
+      <p>Land Records Security System</p>
+    </div>
+    <div class="login-secure">
+      <i class="ti ti-lock" style="font-size:14px"></i>
+      256-bit encrypted · Government certified portal
+    </div>
+    <div class="form-group">
+      <label class="form-label">Employee ID / Farmer ID</label>
+      <div class="input-icon">
+        <i class="ti ti-id"></i>
+        <input class="form-input" id="loginUser" placeholder="e.g. OFF-2024-001" value="ADM-001">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-icon">
+        <i class="ti ti-lock"></i>
+        <input class="form-input" id="loginPass" type="password" placeholder="••••••••" value="admin123">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Login As</label>
+      <select class="form-input filter-select" id="loginRole" style="width:100%">
+        <option value="admin">System Admin</option>
+        <option value="officer">Revenue Officer</option>
+        <option value="clerk">Data Entry Clerk</option>
+        <option value="farmer">Farmer</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;height:42px;font-size:14px" onclick="showMFA()">
+      <i class="ti ti-lock"></i> Secure Login
+    </button>
+    <div class="mfa-box" id="mfaBox">
+      <div style="font-size:12px;color:var(--text2)">Enter the 6-digit OTP sent to your registered mobile</div>
+      <div class="otp-inputs">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,0)" id="o0">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,1)" id="o1">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,2)" id="o2">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,3)" id="o3">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,4)" id="o4">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,5)" id="o5">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Verify & Login</button>
+    </div>
+    <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--text3)">Session timeout: 30 minutes · All activity is logged</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appScreen" class="app" style="display:none">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="ti ti-shield-check"></i></div>
+      <div>
+        <div class="logo-text">AgriShield</div>
+        <div class="logo-sub">Secure Portal</div>
+      </div>
+    </div>
+    <nav style="flex:1;overflow-y:auto">
+
+      <!-- ADMIN NAV -->
+      <div id="navAdmin" style="display:none">
+        <div class="nav-section">
+          <div class="nav-label">Overview</div>
+          <div class="nav-item active" onclick="navigate('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+          <div class="nav-item" onclick="navigate('analytics',this)"><i class="ti ti-chart-line"></i> Analytics</div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Administration</div>
+          <div class="nav-item" onclick="navigate('users',this)"><i class="ti ti-users"></i> User Management</div>
+          <div class="nav-item" onclick="navigate('command',this)"><i class="ti ti-radar"></i> Fraud Monitoring</div>
+          <div class="nav-item" onclick="navigate('audit',this)"><i class="ti ti-clipboard-list"></i> Audit Logs</div>
+          <div class="nav-item" onclick="navigate('incident',this)"><i class="ti ti-emergency-bed"></i> Approvals <span class="nav-badge">2</span></div>
+          <div class="nav-item" onclick="navigate('alerts',this)"><i class="ti ti-alert-triangle notif-dot"></i> Reports <span class="nav-badge">4</span></div>
+          <div class="nav-item" onclick="navigate('health',this)"><i class="ti ti-activity-heartbeat"></i> Settings</div>
+        </div>
+      </div>
+
+      <!-- OFFICER NAV -->
+      <div id="navOfficer" style="display:none">
+        <div class="nav-section">
+          <div class="nav-label">Overview</div>
+          <div class="nav-item active" onclick="navigate('officer-dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Operations</div>
+          <div class="nav-item" onclick="navigate('records',this)"><i class="ti ti-file-description"></i> Land Records</div>
+          <div class="nav-item" onclick="navigate('fraud',this)"><i class="ti ti-shield-x"></i> Fraud Alerts <span class="nav-badge">3</span></div>
+          <div class="nav-item" onclick="navigate('officer-approvals',this)"><i class="ti ti-circle-check"></i> Approval Center</div>
+          <div class="nav-item" onclick="navigate('officer-history',this)"><i class="ti ti-history"></i> Version History</div>
+          <div class="nav-item" onclick="navigate('officer-notifs',this)"><i class="ti ti-bell notif-dot"></i> Notifications</div>
+          <div class="nav-item" onclick="navigate('officer-profile',this)"><i class="ti ti-user-circle"></i> Profile</div>
+        </div>
+      </div>
+
+      <!-- CLERK NAV -->
+      <div id="navClerk" style="display:none">
+        <div class="nav-section">
+          <div class="nav-label">Overview</div>
+          <div class="nav-item active" onclick="navigate('clerk-dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Records</div>
+          <div class="nav-item" onclick="navigate('records',this)"><i class="ti ti-file-description"></i> View Records</div>
+          <div class="nav-item" onclick="navigate('modify',this)"><i class="ti ti-edit"></i> Modify Records</div>
+          <div class="nav-item" onclick="navigate('clerk-delete',this)"><i class="ti ti-trash"></i> Delete Records</div>
+          <div class="nav-item" onclick="navigate('clerk-forms',this)"><i class="ti ti-forms"></i> Forms Management</div>
+          <div class="nav-item" onclick="navigate('clerk-history',this)"><i class="ti ti-history"></i> History</div>
+          <div class="nav-item" onclick="navigate('clerk-profile',this)"><i class="ti ti-user-circle"></i> Profile</div>
+        </div>
+      </div>
+
+      <!-- FARMER NAV -->
+      <div id="navFarmer" style="display:none">
+        <div class="nav-section">
+          <div class="nav-label">My Portal</div>
+          <div class="nav-item active" onclick="navigate('farmer-dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+          <div class="nav-item" onclick="navigate('farmer',this)"><i class="ti ti-file-certificate"></i> My Land Records</div>
+          <div class="nav-item" onclick="navigate('farmer-insurance',this)"><i class="ti ti-shield-check"></i> Insurance Status</div>
+          <div class="nav-item" onclick="navigate('farmer-notifs',this)"><i class="ti ti-bell notif-dot"></i> Notifications</div>
+          <div class="nav-item" onclick="navigate('farmer-profile',this)"><i class="ti ti-user-circle"></i> Profile</div>
+        </div>
+      </div>
+
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">AD</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebarName">Admin User</div>
+        <div class="sidebar-user-role" id="sidebarRole">System Admin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main area -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="mob-menu" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></div>
+        <div>
+          <div class="page-title" id="pageTitle">Admin Dashboard</div>
+          <div class="breadcrumb" id="breadcrumb">Home / Dashboard</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--accent)">
+          <div class="status-dot"></div> System Operational
+        </div>
+        <button class="top-btn"><i class="ti ti-bell"></i></button>
+        <button class="top-btn" onclick="showScreen('loginScreen')"><i class="ti ti-logout"></i> Logout</button>
+        <div class="user-chip">
+          <div class="user-avatar" id="topbarAvatar">AD</div>
+          <div>
+            <div style="font-size:12px;color:var(--text)" id="topbarName">Admin</div>
+            <div class="role-badge" id="topbarRole">Admin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content area with screens -->
+    <div class="content">
+
+      <!-- DASHBOARD SCREEN -->
+      <div id="screen-dashboard" class="screen active">
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <i class="ti ti-file-certificate stat-icon"></i>
+            <div class="stat-label">Total Records</div>
+            <div class="stat-value green">1,24,890</div>
+            <div class="stat-delta"><i class="ti ti-arrow-up" style="color:var(--accent)"></i> 234 this week</div>
+          </div>
+          <div class="stat-card warn">
+            <i class="ti ti-clock stat-icon"></i>
+            <div class="stat-label">Pending Approvals</div>
+            <div class="stat-value warn">47</div>
+            <div class="stat-delta">12 high priority</div>
+          </div>
+          <div class="stat-card red">
+            <i class="ti ti-alert-triangle stat-icon"></i>
+            <div class="stat-label">Suspicious Activities</div>
+            <div class="stat-value red">9</div>
+            <div class="stat-delta">↑ 3 since yesterday</div>
+          </div>
+          <div class="stat-card blue">
+            <i class="ti ti-users stat-icon"></i>
+            <div class="stat-label">Active Users Today</div>
+            <div class="stat-value blue">312</div>
+            <div class="stat-delta">Peak: 2:00 PM – 4:00 PM</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:16px">
+          <!-- Activity bars -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-chart-bar"></i> Record Modifications (Last 7 Days)</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end;height:90px;padding-bottom:4px">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="flex:1;width:100%;background:var(--accent);border-radius:3px 3px 0 0;min-height:20px;height:45px;opacity:.7"></div>
+                <div style="font-size:10px;color:var(--text3)">Mon</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--accent);border-radius:3px 3px 0 0;height:60px;opacity:.8"></div>
+                <div style="font-size:10px;color:var(--text3)">Tue</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--accent);border-radius:3px 3px 0 0;height:35px;opacity:.7"></div>
+                <div style="font-size:10px;color:var(--text3)">Wed</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--warn);border-radius:3px 3px 0 0;height:78px;opacity:.9"></div>
+                <div style="font-size:10px;color:var(--warn)">Thu</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--danger);border-radius:3px 3px 0 0;height:85px"></div>
+                <div style="font-size:10px;color:var(--danger)">Fri</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--accent);border-radius:3px 3px 0 0;height:28px;opacity:.6"></div>
+                <div style="font-size:10px;color:var(--text3)">Sat</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="width:100%;background:var(--accent);border-radius:3px 3px 0 0;height:20px;opacity:.5"></div>
+                <div style="font-size:10px;color:var(--text3)">Sun</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text3)">
+              <span style="color:var(--accent)">▊ Normal</span>
+              <span style="color:var(--warn)">▊ Elevated</span>
+              <span style="color:var(--danger)">▊ Critical</span>
+            </div>
+          </div>
+
+          <!-- Recent alerts -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-alert-octagon"></i> Live Alerts</div>
+              <span class="badge badge-red">4 Active</span>
+            </div>
+            <div class="alert-item critical">
+              <div class="alert-icon critical"><i class="ti ti-bolt"></i></div>
+              <div>
+                <div class="alert-title">Bulk Modification Detected</div>
+                <div class="alert-desc">User CLK-009 modified 45 records in under 3 min</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 2 min ago · IP: 192.168.4.21</div>
+              </div>
+            </div>
+            <div class="alert-item warning">
+              <div class="alert-icon warning"><i class="ti ti-moon"></i></div>
+              <div>
+                <div class="alert-title">Off-Hours Access</div>
+                <div class="alert-desc">Login at 02:34 AM from Bidar district</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 1 hr ago</div>
+              </div>
+            </div>
+            <div class="alert-item info">
+              <div class="alert-icon info"><i class="ti ti-map-pin"></i></div>
+              <div>
+                <div class="alert-title">New Location Login</div>
+                <div class="alert-desc">OFF-034 accessed from unregistered IP range</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 3 hr ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- District heatmap + Activity -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-map-2"></i> Fraud Heatmap — Karnataka Districts</div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Suspicious modification density by district (current month)</div>
+            <div class="heatmap" id="heatmapGrid"></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text3)">
+              <span>Low</span>
+              <div style="height:8px;flex:1;background:linear-gradient(90deg,#1d9e7530,#ef9f27,#e24b4a);border-radius:4px"></div>
+              <span>High</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-activity"></i> Recent Activity</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#1d9e7522;color:var(--accent)"><i class="ti ti-check" style="font-size:13px"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">Record #MYS-4421 verified & approved</div>
+                <div class="timeline-meta">OFF-012 · Mysuru · 10:42 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#e24b4a22;color:var(--danger)"><i class="ti ti-x" style="font-size:13px"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">Failed login attempt blocked (5x)</div>
+                <div class="timeline-meta">Unknown · Bengaluru · 10:38 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#378add22;color:var(--info)"><i class="ti ti-edit" style="font-size:13px"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">Crop type updated for survey KLR-882</div>
+                <div class="timeline-meta">CLK-003 · Kolar · 10:21 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#1d9e7522;color:var(--accent)"><i class="ti ti-user-plus" style="font-size:13px"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">New farmer account created</div>
+                <div class="timeline-meta">ADM-001 · System · 09:55 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#ef9f2722;color:var(--warn)"><i class="ti ti-alert-triangle" style="font-size:13px"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">Ownership change flagged for review</div>
+                <div class="timeline-meta">CLK-009 · Hassan · 09:40 AM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERTS SCREEN -->
+      <div id="screen-alerts" class="screen">
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div style="font-size:13px;color:var(--text2)">Real-time security alerts across all districts</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost"><i class="ti ti-refresh"></i> Refresh</button>
+              <button class="btn btn-primary"><i class="ti ti-download"></i> Export</button>
+            </div>
+          </div>
+          <div id="allAlerts"></div>
+        </div>
+      </div>
+
+      <!-- RECORDS SCREEN -->
+      <div id="screen-records" class="screen">
+        <div class="card">
+          <div class="filter-row">
+            <div class="search-bar" style="flex:1">
+              <i class="ti ti-search"></i>
+              <input placeholder="Search by Farmer ID, Survey No., Village...">
+            </div>
+            <select class="filter-select"><option>All Districts</option><option>Mysuru</option><option>Bengaluru Rural</option><option>Kolar</option><option>Hassan</option><option>Bidar</option></select>
+            <select class="filter-select"><option>All Crops</option><option>Paddy</option><option>Sugarcane</option><option>Cotton</option><option>Ragi</option></select>
+            <select class="filter-select"><option>All Status</option><option>Verified</option><option>Pending</option><option>Flagged</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Survey No.</th><th>Owner Name</th><th>District</th><th>Village</th><th>Crop</th><th>Area (acres)</th><th>Integrity</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTable"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="page-info">Showing 1–10 of 1,24,890 records</div>
+            <div class="page-btns">
+              <button class="page-btn"><i class="ti ti-chevron-left" style="font-size:13px"></i></button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">...</button>
+              <button class="page-btn">12489</button>
+              <button class="page-btn"><i class="ti ti-chevron-right" style="font-size:13px"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODIFY RECORD SCREEN -->
+      <div id="screen-modify" class="screen">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-search"></i> Find Record</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Survey Number</label>
+              <input class="form-input" id="modSurvey" placeholder="e.g. MYS-4421" value="MYS-4421">
+            </div>
+            <button class="btn btn-primary" onclick="loadRecord()"><i class="ti ti-search"></i> Load Record</button>
+          </div>
+          <div class="card" id="recordPreviewCard" style="display:none">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-file-description"></i> Record — MYS-4421</div>
+              <div class="integrity-badge integrity-ok"><i class="ti ti-shield-check" style="font-size:13px"></i> Verified</div>
+            </div>
+            <div style="font-size:12px;color:var(--text2);line-height:2">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                <span style="color:var(--text3)">Owner:</span><span>Ramaiah K.</span>
+                <span style="color:var(--text3)">District:</span><span>Mysuru</span>
+                <span style="color:var(--text3)">Village:</span><span>Hullahalli</span>
+                <span style="color:var(--text3)">Crop:</span><span id="currentCrop">Paddy</span>
+                <span style="color:var(--text3)">Area:</span><span>3.2 acres</span>
+                <span style="color:var(--text3)">Insurance:</span><span><span class="badge badge-green">Active</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="modifyFormCard" style="display:none;margin-top:16px">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-edit"></i> Modify Record — MYS-4421</div>
+          </div>
+          <div class="warn-box">
+            <i class="ti ti-alert-triangle"></i>
+            <span>You are modifying a <strong>protected government record</strong>. All changes are cryptographically logged and audited.</span>
+          </div>
+          <div class="grid-2" style="margin-top:12px">
+            <div class="form-group">
+              <label class="form-label">Crop Type</label>
+              <select class="form-input" id="newCrop" onchange="updatePreview()">
+                <option>Paddy</option><option>Sugarcane</option><option selected>Cotton</option><option>Ragi</option><option>Wheat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Area (acres)</label>
+              <input class="form-input" id="newArea" value="3.2" onchange="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Insurance Status</label>
+              <select class="form-input"><option>Active</option><option>Expired</option><option>Pending</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reason for Modification</label>
+              <input class="form-input" placeholder="e.g. Crop rotation — seasonal update">
+            </div>
+          </div>
+          <div class="change-preview">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;letter-spacing:.5px">Change Preview</div>
+            <div class="change-row"><span style="color:var(--text3);width:80px">Crop:</span> <span class="change-old" id="previewOldCrop">Paddy</span> <i class="ti ti-arrow-right" style="font-size:13px;color:var(--text3)"></i> <span class="change-new" id="previewNewCrop">Cotton</span></div>
+            <div class="change-row"><span style="color:var(--text3);width:80px">Area:</span> <span class="change-old">3.2 acres</span> <i class="ti ti-arrow-right" style="font-size:13px;color:var(--text3)"></i> <span class="change-new">3.2 acres</span></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button class="btn btn-primary" onclick="showModifyConfirm()"><i class="ti ti-shield-check"></i> Submit with OTP Verification</button>
+            <button class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT LOGS SCREEN -->
+      <div id="screen-audit" class="screen">
+        <div class="card">
+          <div class="filter-row" style="margin-bottom:16px">
+            <select class="filter-select"><option>All Users</option><option>CLK-009</option><option>OFF-012</option><option>OFF-034</option></select>
+            <select class="filter-select"><option>All Districts</option><option>Mysuru</option><option>Kolar</option><option>Hassan</option></select>
+            <select class="filter-select"><option>All Activity</option><option>Normal</option><option>Suspicious</option><option>Failed Login</option></select>
+            <input type="date" class="form-input filter-select" style="width:140px">
+            <button class="btn btn-ghost"><i class="ti ti-download"></i> Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>User</th><th>Action</th><th>Record</th><th>Old Value</th><th>New Value</th><th>IP Address</th><th>Device</th><th>Timestamp</th><th>Status</th></tr></thead>
+              <tbody id="auditTable"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="page-info">Showing 1–10 of 4,892 log entries</div>
+            <div class="page-btns">
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERSION HISTORY SCREEN -->
+      <div id="screen-history" class="screen">
+        <div class="card" style="margin-bottom:16px">
+          <div class="form-group" style="margin-bottom:0;display:flex;gap:10px">
+            <input class="form-input" placeholder="Enter survey number..." value="MYS-4421" style="flex:1">
+            <button class="btn btn-primary"><i class="ti ti-history"></i> Load History</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-git-branch"></i> Version History — MYS-4421</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="integrity-badge integrity-ok"><i class="ti ti-shield-check" style="font-size:13px"></i> Chain Intact</div>
+              <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="toggleDiff()"><i class="ti ti-columns"></i> Diff View</button>
+            </div>
+          </div>
+          <div id="diffView" style="display:none;margin-bottom:16px">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Side-by-Side Comparison: v2 → v3</div>
+            <div class="table-wrap">
+              <table class="diff-table">
+                <thead><tr><th>Field</th><th>v2 (Mar 12)</th><th>v3 (May 8)</th><th>Changed By</th><th>Status</th></tr></thead>
+                <tbody id="diffTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="versionHistory"></div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS SCREEN -->
+      <div id="screen-analytics" class="screen">
+        <div class="stats-grid" style="margin-bottom:16px">
+          <div class="stat-card green"><i class="ti ti-trending-up stat-icon"></i><div class="stat-label">Records Verified</div><div class="stat-value green">98.4%</div><div class="stat-delta">Integrity rate</div></div>
+          <div class="stat-card red"><i class="ti ti-bug stat-icon"></i><div class="stat-label">Fraud Attempts</div><div class="stat-value red">23</div><div class="stat-delta">Blocked this month</div></div>
+          <div class="stat-card blue"><i class="ti ti-clock stat-icon"></i><div class="stat-label">Avg Response Time</div><div class="stat-value blue">1.4s</div><div class="stat-delta">API latency</div></div>
+          <div class="stat-card warn"><i class="ti ti-shield stat-icon"></i><div class="stat-label">Security Score</div><div class="stat-value warn">87/100</div><div class="stat-delta">+5 this month</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-chart-donut"></i> Activity Breakdown</div></div>
+            <div id="pieChart" style="display:flex;gap:12px;flex-direction:column"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-map-2"></i> Top Districts by Fraud Risk</div></div>
+            <div id="districtRisk"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAUD DETECTION SCREEN -->
+      <div id="screen-fraud" class="screen">
+        <div class="card" style="margin-bottom:16px;border-color:var(--danger)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;background:#e24b4a22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--danger)"><i class="ti ti-alert-octagon"></i></div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--danger)">⚠ Possible Insider Threat Detected</div>
+              <div style="font-size:12px;color:var(--text2)">User CLK-009 has shown anomalous behaviour — bulk modifications outside business hours</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-danger"><i class="ti ti-lock"></i> Suspend Account</button>
+              <button class="btn btn-ghost"><i class="ti ti-eye"></i> View Profile</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-user-exclamation"></i> Suspicious Users</div></div>
+            <div id="suspiciousUsers"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-shield-x"></i> Attack Patterns</div></div>
+            <div id="attackPatterns"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title"><i class="ti ti-brain"></i> AI Risk Score — CLK-009</div><span class="badge badge-red">Critical</span></div>
+          <div class="grid-2">
+            <div id="aiRiskFactors"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+                <circle id="riskArc" cx="60" cy="60" r="50" fill="none" stroke="var(--danger)" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s ease"/>
+                <text x="60" y="56" text-anchor="middle" font-size="22" font-weight="700" fill="var(--danger)" font-family="Georgia,serif">90</text>
+                <text x="60" y="72" text-anchor="middle" font-size="10" fill="var(--text3)">/ 100</text>
+              </svg>
+              <div style="font-size:12px;color:var(--text2);text-align:center">Composite Risk Score<br><span style="color:var(--danger);font-weight:600">CRITICAL THREAT</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER MANAGEMENT SCREEN -->
+      <div id="screen-users" class="screen">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+            <div class="search-bar" style="width:300px"><i class="ti ti-search"></i><input placeholder="Search users..."></div>
+            <button class="btn btn-primary" onclick="showAddUser()"><i class="ti ti-user-plus"></i> Add User</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>User ID</th><th>Name</th><th>Role</th><th>District</th><th>Last Login</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="usersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY COMMAND CENTER -->
+      <div id="screen-command" class="screen">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div id="threatLevelBadge" class="cmd-threat-level threat-elevated"><i class="ti ti-radar"></i> THREAT LEVEL: ELEVATED</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)"><div class="status-dot"></div> Live feed · auto-refreshing</div>
+        </div>
+        <div class="cmd-grid">
+          <div class="cmd-metric"><div class="cmd-metric-val" style="color:var(--danger)" id="cmdLiveAttacks">3</div><div class="cmd-metric-label">Live Attacks</div></div>
+          <div class="cmd-metric"><div class="cmd-metric-val" style="color:var(--warn)" id="cmdSusUsers">5</div><div class="cmd-metric-label">Suspicious Users</div></div>
+          <div class="cmd-metric"><div class="cmd-metric-val" style="color:var(--danger)" id="cmdIntegFail">2</div><div class="cmd-metric-label">Integrity Failures</div></div>
+          <div class="cmd-metric"><div class="cmd-metric-val" style="color:var(--accent)" id="cmdBlocked">47</div><div class="cmd-metric-label">Attacks Blocked</div></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-broadcast"></i> Live Threat Feed</div><span class="badge badge-red">Live</span></div><div id="liveFeed" style="max-height:300px;overflow-y:auto"></div></div>
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-chart-area"></i> Activity (Last 60s)</div></div><canvas id="liveChart" height="120" style="width:100%;display:block"></canvas><div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text3)"><span style="color:var(--accent)">▊ Normal ops</span><span style="color:var(--danger)">▊ Threats</span></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-map-pin"></i> Geolocation Monitor</div></div><div id="geoMonitor"></div></div>
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-shield-bolt"></i> Quick Actions</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+              <button class="incident-btn incident-btn-red" onclick="freezeAllRecords()"><i class="ti ti-snowflake"></i> Emergency: Freeze All Modifications</button>
+              <button class="incident-btn incident-btn-warn" onclick="forceLogoutSuspicious()"><i class="ti ti-logout"></i> Force-Logout Suspicious Users</button>
+              <button class="incident-btn incident-btn-blue" onclick="exportSecurityReport()"><i class="ti ti-file-report"></i> Download Security Report</button>
+              <button class="incident-btn incident-btn-blue" onclick="navigate('incident',null)"><i class="ti ti-emergency-bed"></i> Open Incident Response Panel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INCIDENT RESPONSE -->
+      <div id="screen-incident" class="screen">
+        <div class="card" style="margin-bottom:16px;border-color:var(--danger)"><div style="display:flex;align-items:center;gap:12px"><div style="width:42px;height:42px;background:#e24b4a22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--danger)"><i class="ti ti-emergency-bed"></i></div><div><div style="font-size:14px;font-weight:600;color:var(--danger)">Incident Response Panel — Active Incidents: 2</div><div style="font-size:12px;color:var(--text2)">Take action on suspicious users, freeze records or escalate cases</div></div></div></div>
+        <div id="incidentList"></div>
+      </div>
+
+      <!-- CASE MANAGEMENT -->
+      <div id="screen-cases" class="screen">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div style="font-size:13px;color:var(--text2)">Investigation cases created from anomalous activity</div><button class="btn btn-primary" onclick="createCase()"><i class="ti ti-plus"></i> New Case</button></div>
+        <div id="caseList"></div>
+      </div>
+
+      <!-- SYSTEM HEALTH -->
+      <div id="screen-health" class="screen">
+        <div class="grid-2">
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-server"></i> Service Status</div></div><div id="healthServices"></div></div>
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-chart-line"></i> System Metrics</div></div><div id="healthMetrics"></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><div class="card-title"><i class="ti ti-shield-lock"></i> Security Events (24h)</div></div><div id="healthEvents"></div></div>
+      </div>
+
+      <!-- FARMER PANEL -->
+      <div id="screen-farmer" class="screen">
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-file-certificate"></i> My Land Records</div></div><div id="farmerRecords"></div></div>
+          <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-bell"></i> Notification Timeline</div></div><div id="farmerNotifs"></div></div>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-signature"></i> Digital Signature & Verification</div></div><div id="farmerSig"></div></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- OFFICER DASHBOARD -->
+      <!-- ============================================================ -->
+      <div id="screen-officer-dashboard" class="screen">
+        <div class="stats-grid">
+          <div class="stat-card red">
+            <i class="ti ti-alert-triangle stat-icon"></i>
+            <div class="stat-label">Total Fraud Alerts</div>
+            <div class="stat-value red">9</div>
+            <div class="stat-delta">3 high priority</div>
+          </div>
+          <div class="stat-card warn">
+            <i class="ti ti-clock stat-icon"></i>
+            <div class="stat-label">Pending Approvals</div>
+            <div class="stat-value warn">12</div>
+            <div class="stat-delta">6 require action today</div>
+          </div>
+          <div class="stat-card blue">
+            <i class="ti ti-lock stat-icon"></i>
+            <div class="stat-label">Blocked Clerks</div>
+            <div class="stat-value blue">1</div>
+            <div class="stat-delta">CLK-009 suspended</div>
+          </div>
+          <div class="stat-card green">
+            <i class="ti ti-edit stat-icon"></i>
+            <div class="stat-label">Recent Ownership Changes</div>
+            <div class="stat-value green">7</div>
+            <div class="stat-delta">Last 24 hours</div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-alert-octagon"></i> Recent Fraud Activity</div><span class="badge badge-red">Live</span></div>
+            <div class="alert-item critical">
+              <div class="alert-icon critical"><i class="ti ti-bolt"></i></div>
+              <div>
+                <div class="alert-title">Bulk Modification — CLK-009</div>
+                <div class="alert-desc">45 records modified in under 3 minutes. Off-hours access at 11:42 PM.</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 2 min ago</div>
+              </div>
+            </div>
+            <div class="alert-item warning">
+              <div class="alert-icon warning"><i class="ti ti-shield-x"></i></div>
+              <div>
+                <div class="alert-title">Hash Mismatch — HSN-1190</div>
+                <div class="alert-desc">Digital signature mismatch. Record integrity compromised.</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 18 min ago</div>
+              </div>
+            </div>
+            <div class="alert-item info">
+              <div class="alert-icon info"><i class="ti ti-map-pin"></i></div>
+              <div>
+                <div class="alert-title">New Location — OFF-034</div>
+                <div class="alert-desc">Login from unregistered IP range. MFA triggered successfully.</div>
+                <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> 3 hr ago</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-list-check"></i> Quick Alert Summary</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Critical alerts</span>
+                <span class="badge badge-red">2</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Warnings</span>
+                <span class="badge badge-warn">4</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Informational</span>
+                <span class="badge badge-blue">3</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Pending your action</span>
+                <span class="badge badge-warn">12</span>
+              </div>
+              <button class="btn btn-primary" style="justify-content:center" onclick="navigate('fraud',null)"><i class="ti ti-shield-x"></i> Review Fraud Alerts</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- OFFICER FRAUD ALERTS (extended from existing fraud screen) -->
+      <!-- ============================================================ -->
+      <div id="screen-fraud" class="screen">
+        <div class="card" style="margin-bottom:16px;border-color:var(--danger)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;background:#e24b4a22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--danger)"><i class="ti ti-alert-octagon"></i></div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--danger)">⚠ Possible Insider Threat Detected</div>
+              <div style="font-size:12px;color:var(--text2)">User CLK-009 has shown anomalous behaviour — bulk modifications outside business hours</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-danger" onclick="officerBlockClerk('CLK-009','Shiva Kumar')"><i class="ti ti-lock"></i> Block Clerk</button>
+              <button class="btn btn-ghost" onclick="showToast('Profile for CLK-009 loaded','info')"><i class="ti ti-eye"></i> View Profile</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-user-exclamation"></i> Suspicious Users</div></div>
+            <div id="suspiciousUsers"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-shield-x"></i> Attack Patterns</div></div>
+            <div id="attackPatterns"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title"><i class="ti ti-brain"></i> AI Risk Score — CLK-009</div><span class="badge badge-red">Critical</span></div>
+          <div class="grid-2">
+            <div id="aiRiskFactors"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+                <circle id="riskArc" cx="60" cy="60" r="50" fill="none" stroke="var(--danger)" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s ease"/>
+                <text x="60" y="56" text-anchor="middle" font-size="22" font-weight="700" fill="var(--danger)" font-family="Georgia,serif">90</text>
+                <text x="60" y="72" text-anchor="middle" font-size="10" fill="var(--text3)">/ 100</text>
+              </svg>
+              <div style="font-size:12px;color:var(--text2);text-align:center">Composite Risk Score<br><span style="color:var(--danger);font-weight:600">CRITICAL THREAT</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- OFFICER ACTION TABLE -->
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title"><i class="ti ti-table"></i> Fraud Cases — Take Action</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Alert</th><th>User</th><th>Risk</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="fraudActionTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- OFFICER APPROVAL CENTER -->
+      <!-- ============================================================ -->
+      <div id="screen-officer-approvals" class="screen">
+        <div class="card" style="margin-bottom:16px">
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Pending fraud reviews and ownership modification approvals requiring your decision</div>
+          <div id="approvalList"></div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- OFFICER VERSION HISTORY (action log) -->
+      <!-- ============================================================ -->
+      <div id="screen-officer-history" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-history"></i> My Action History — Officer Priya Venkat</div>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px"><i class="ti ti-download"></i> Export</button>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Your administrative actions — separate from system-wide audit logs</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Action</th><th>Target User / Record</th><th>Outcome</th><th>Timestamp</th></tr></thead>
+              <tbody id="officerHistoryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OFFICER NOTIFICATIONS -->
+      <div id="screen-officer-notifs" class="screen">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-bell"></i> Officer Notifications</div><span class="badge badge-red">5 New</span></div>
+          <div id="officerNotifList"></div>
+        </div>
+      </div>
+
+      <!-- OFFICER PROFILE -->
+      <div id="screen-officer-profile" class="screen">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-user-circle"></i> Officer Profile</div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+              <div style="display:grid;grid-template-columns:130px 1fr;gap:8px;color:var(--text2)">
+                <span style="color:var(--text3)">Name:</span><span>Priya Venkat</span>
+                <span style="color:var(--text3)">Officer ID:</span><span style="font-family:monospace;color:var(--accent)">OFF-012</span>
+                <span style="color:var(--text3)">Role:</span><span><span class="badge badge-warn">Revenue Officer</span></span>
+                <span style="color:var(--text3)">District:</span><span>Mysuru</span>
+                <span style="color:var(--text3)">Mobile:</span><span>+91 ****7821</span>
+                <span style="color:var(--text3)">Status:</span><span><span class="badge badge-green">Active</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-chart-bar"></i> My Activity Summary</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Cases Reviewed</span><span style="color:var(--accent);font-weight:600">24</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Fraud Approved</span><span style="color:var(--danger);font-weight:600">7</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Cases Dismissed</span><span style="color:var(--info);font-weight:600">14</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Clerks Blocked</span><span style="color:var(--warn);font-weight:600">1</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- CLERK DASHBOARD -->
+      <!-- ============================================================ -->
+      <div id="screen-clerk-dashboard" class="screen">
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <i class="ti ti-edit stat-icon"></i>
+            <div class="stat-label">Records Updated Today</div>
+            <div class="stat-value green">23</div>
+            <div class="stat-delta">Across 3 districts</div>
+          </div>
+          <div class="stat-card warn">
+            <i class="ti ti-forms stat-icon"></i>
+            <div class="stat-label">Pending Forms</div>
+            <div class="stat-value warn">8</div>
+            <div class="stat-delta">Form 1: 5 · Form 2: 3</div>
+          </div>
+          <div class="stat-card blue">
+            <i class="ti ti-history stat-icon"></i>
+            <div class="stat-label">Recent Modifications</div>
+            <div class="stat-value blue">47</div>
+            <div class="stat-delta">This week</div>
+          </div>
+          <div class="stat-card green">
+            <i class="ti ti-file-description stat-icon"></i>
+            <div class="stat-label">Assigned Records</div>
+            <div class="stat-value green">142</div>
+            <div class="stat-delta">Kolar district</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-activity"></i> My Recent Work</div></div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#378add22;color:var(--info)"><i class="ti ti-edit" style="font-size:13px"></i></div>
+              <div class="timeline-content"><div class="timeline-title">Crop type updated — KLR-882</div><div class="timeline-meta">Wheat → Ragi · 10:21 AM</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#1d9e7522;color:var(--accent)"><i class="ti ti-forms" style="font-size:13px"></i></div>
+              <div class="timeline-content"><div class="timeline-title">Form 2 submitted — KLR-889</div><div class="timeline-meta">Insurance update · 09:44 AM</div></div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:#1d9e7522;color:var(--accent)"><i class="ti ti-check" style="font-size:13px"></i></div>
+              <div class="timeline-content"><div class="timeline-title">Area correction filed — BGR-3301</div><div class="timeline-meta">2.4 → 2.6 acres · Yesterday</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-clipboard-list"></i> Pending Tasks</div></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Form 1 entries pending</span><span class="badge badge-warn">5</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Form 2 entries pending</span><span class="badge badge-warn">3</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <span style="font-size:13px;color:var(--text2)">Correction requests</span><span class="badge badge-blue">2</span>
+              </div>
+              <button class="btn btn-primary" style="justify-content:center" onclick="navigate('clerk-forms',null)"><i class="ti ti-forms"></i> Open Forms Management</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLERK DELETE RECORDS -->
+      <div id="screen-clerk-delete" class="screen">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-trash"></i> Delete / Deactivate Records</div></div>
+          <div class="warn-box" style="margin-bottom:16px"><i class="ti ti-alert-triangle"></i> Records are soft-deleted (marked inactive). They remain in the audit trail and can be restored by a Revenue Officer.</div>
+          <div class="filter-row">
+            <div class="search-bar" style="flex:1"><i class="ti ti-search"></i><input placeholder="Search by Survey No. or Farmer ID..."></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Survey No.</th><th>Owner</th><th>District</th><th>Crop</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="clerkDeleteTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLERK FORMS MANAGEMENT -->
+      <div id="screen-clerk-forms" class="screen">
+        <div class="tabs">
+          <div class="tab active" onclick="switchFormTab(this,'form1Tab')">Form 1 — Land Registration</div>
+          <div class="tab" onclick="switchFormTab(this,'form2Tab')">Form 2 — Crop Update</div>
+          <div class="tab" onclick="switchFormTab(this,'corrTab')">Correction Requests</div>
+        </div>
+        <div id="form1Tab">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-file-plus"></i> Form 1 — Land Registration Entries</div><button class="btn btn-primary" onclick="showToast('New Form 1 entry opened','info')"><i class="ti ti-plus"></i> Add Entry</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Form ID</th><th>Farmer</th><th>Survey No.</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="form1Table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="form2Tab" style="display:none">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-file-text"></i> Form 2 — Crop Update Entries</div><button class="btn btn-primary" onclick="showToast('New Form 2 entry opened','info')"><i class="ti ti-plus"></i> Add Entry</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Form ID</th><th>Survey No.</th><th>Old Crop</th><th>New Crop</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody id="form2Table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="corrTab" style="display:none">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-pencil"></i> Correction Requests</div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Request ID</th><th>Survey No.</th><th>Field</th><th>Requested Change</th><th>Status</th></tr></thead>
+                <tbody id="corrTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLERK HISTORY (own work only) -->
+      <div id="screen-clerk-history" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-history"></i> My Work History — Geetha S.</div>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px"><i class="ti ti-download"></i> Export</button>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Showing only your own modifications — not system-wide logs</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Action</th><th>Record</th><th>Change</th><th>Time</th></tr></thead>
+              <tbody id="clerkHistoryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLERK PROFILE -->
+      <div id="screen-clerk-profile" class="screen">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-user-circle"></i> Clerk Profile</div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+              <div style="display:grid;grid-template-columns:130px 1fr;gap:8px;color:var(--text2)">
+                <span style="color:var(--text3)">Name:</span><span>Geetha S.</span>
+                <span style="color:var(--text3)">Clerk ID:</span><span style="font-family:monospace;color:var(--accent)">CLK-003</span>
+                <span style="color:var(--text3)">Role:</span><span><span class="badge badge-gray">Data Entry Clerk</span></span>
+                <span style="color:var(--text3)">District:</span><span>Kolar</span>
+                <span style="color:var(--text3)">Mobile:</span><span>+91 ****4512</span>
+                <span style="color:var(--text3)">Status:</span><span><span class="badge badge-green">Active</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-chart-bar"></i> My Work Summary</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Records Modified</span><span style="color:var(--accent);font-weight:600">47</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Forms Submitted</span><span style="color:var(--info);font-weight:600">19</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px;background:var(--card2);border-radius:var(--radius)"><span style="color:var(--text2)">Corrections Filed</span><span style="color:var(--accent);font-weight:600">5</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- FARMER DASHBOARD -->
+      <!-- ============================================================ -->
+      <div id="screen-farmer-dashboard" class="screen">
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <i class="ti ti-map-2 stat-icon"></i>
+            <div class="stat-label">My Total Lands</div>
+            <div class="stat-value green">2</div>
+            <div class="stat-delta">Mysuru district</div>
+          </div>
+          <div class="stat-card blue">
+            <i class="ti ti-shield-check stat-icon"></i>
+            <div class="stat-label">Insurance Active</div>
+            <div class="stat-value blue">1</div>
+            <div class="stat-delta">1 pending renewal</div>
+          </div>
+          <div class="stat-card warn">
+            <i class="ti ti-bell stat-icon"></i>
+            <div class="stat-label">Recent Alerts</div>
+            <div class="stat-value warn">1</div>
+            <div class="stat-delta">Ownership change detected</div>
+          </div>
+          <div class="stat-card green">
+            <i class="ti ti-file-invoice stat-icon"></i>
+            <div class="stat-label">Pending Claims</div>
+            <div class="stat-value green">0</div>
+            <div class="stat-delta">All claims resolved</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-file-certificate"></i> My Records At a Glance</div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="navigate('farmer',null)"><i class="ti ti-arrow-right"></i> View All</button></div>
+            <div style="background:var(--card2);border-radius:var(--radius);padding:14px;margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-weight:700;color:var(--accent);font-family:monospace">MYS-4421</span>
+                <span class="integrity-badge integrity-ok" style="font-size:11px;padding:3px 8px"><i class="ti ti-shield-check" style="font-size:11px"></i> Verified</span>
+              </div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.8">
+                <div>Crop: <span style="color:var(--text)">Paddy</span> · Area: <span style="color:var(--text)">3.2 acres</span></div>
+                <div>Village: <span style="color:var(--text)">Hullahalli</span> · Insurance: <span class="badge badge-green" style="padding:1px 6px">Active</span></div>
+              </div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="navigate('farmer',null)"><i class="ti ti-file-description"></i> View Full Records</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-bell"></i> Recent Notifications</div></div>
+            <div class="farmer-notif">
+              <div class="live-dot" style="background:var(--warn);flex-shrink:0;margin-top:4px"></div>
+              <div><div style="font-size:12px;color:var(--text)">Your record MYS-4421 crop type was modified to Sugarcane</div><div style="font-size:11px;color:var(--text3);margin-top:2px">May 8, 11:42 PM</div></div>
+            </div>
+            <div class="farmer-notif">
+              <div class="live-dot" style="background:var(--accent);flex-shrink:0;margin-top:4px"></div>
+              <div><div style="font-size:12px;color:var(--text)">Record MYS-4421 verified and approved by Revenue Officer</div><div style="font-size:11px;color:var(--text3);margin-top:2px">May 8, 10:42 AM</div></div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="navigate('farmer-notifs',null)"><i class="ti ti-bell"></i> View All Notifications</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FARMER INSURANCE STATUS -->
+      <div id="screen-farmer-insurance" class="screen">
+        <div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="stat-card blue"><i class="ti ti-shield-check stat-icon"></i><div class="stat-label">Active Policies</div><div class="stat-value blue">1</div></div>
+          <div class="stat-card warn"><i class="ti ti-clock stat-icon"></i><div class="stat-label">Pending Claims</div><div class="stat-value warn">0</div></div>
+          <div class="stat-card green"><i class="ti ti-check stat-icon"></i><div class="stat-label">Approved Claims</div><div class="stat-value green">1</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-shield-check"></i> My Insurance Policies</div></div>
+          <div style="background:var(--card2);border-radius:var(--radius);padding:16px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div><div style="font-size:14px;font-weight:600;color:var(--text)">PM Fasal Bima Yojana</div><div style="font-size:12px;color:var(--text3)">Policy No: PMFBY-MYS-2026-00142</div></div>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text2)">
+              <div>Survey No: <span style="color:var(--text)">MYS-4421</span></div>
+              <div>Crop: <span style="color:var(--text)">Paddy</span></div>
+              <div>Coverage: <span style="color:var(--text)">₹1,20,000</span></div>
+              <div>Valid Till: <span style="color:var(--text)">Oct 2026</span></div>
+            </div>
+          </div>
+          <div style="background:var(--card2);border-radius:var(--radius);padding:16px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div><div style="font-size:14px;font-weight:600;color:var(--text)">Rythu Bandhu Scheme</div><div style="font-size:12px;color:var(--text3)">Policy No: RB-MYS-2025-00887</div></div>
+              <span class="badge badge-warn">Expired</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text2)">
+              <div>Survey No: <span style="color:var(--text)">MYS-8822</span></div>
+              <div>Crop: <span style="color:var(--text)">Paddy</span></div>
+              <div>Coverage: <span style="color:var(--text)">₹80,000</span></div>
+              <div>Expired: <span style="color:var(--danger)">Mar 2026</span></div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:10px" onclick="showToast('Renewal request submitted for RB-MYS-2025-00887','success')"><i class="ti ti-refresh"></i> Apply for Renewal</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title"><i class="ti ti-file-invoice"></i> Claim History</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Claim ID</th><th>Policy</th><th>Reason</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace;font-size:12px">CLM-2026-001</td>
+                  <td>PMFBY-MYS-2026-00142</td>
+                  <td>Crop damage — drought</td>
+                  <td style="color:var(--accent)">₹45,000</td>
+                  <td><span class="badge badge-green">Approved</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace;font-size:12px">CLM-2025-018</td>
+                  <td>RB-MYS-2025-00887</td>
+                  <td>Flood damage</td>
+                  <td style="color:var(--warn)">₹30,000</td>
+                  <td><span class="badge badge-red">Rejected</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FARMER NOTIFICATIONS -->
+      <div id="screen-farmer-notifs" class="screen">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-bell"></i> My Notifications</div></div>
+          <div id="farmerNotifsFull"></div>
+        </div>
+      </div>
+
+      <!-- FARMER PROFILE -->
+      <div id="screen-farmer-profile" class="screen">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-user-circle"></i> My Profile</div></div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+              <div style="display:grid;grid-template-columns:130px 1fr;gap:8px;color:var(--text2)">
+                <span style="color:var(--text3)">Name:</span><span>Ramaiah K.</span>
+                <span style="color:var(--text3)">Farmer ID:</span><span style="font-family:monospace;color:var(--accent)">FMR-1021</span>
+                <span style="color:var(--text3)">Aadhaar:</span><span>XXXX XXXX 7841</span>
+                <span style="color:var(--text3)">Village:</span><span>Hullahalli</span>
+                <span style="color:var(--text3)">District:</span><span>Mysuru</span>
+                <span style="color:var(--text3)">Mobile:</span><span>+91 ****7821</span>
+                <span style="color:var(--text3)">Linked Lands:</span><span>MYS-4421, MYS-8822</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title"><i class="ti ti-map-pin"></i> Linked Land Records</div></div>
+            <div style="font-size:13px;color:var(--text2)">
+              <div style="padding:10px;background:var(--card2);border-radius:var(--radius);margin-bottom:8px">
+                <div style="font-family:monospace;color:var(--accent);font-weight:600">MYS-4421</div>
+                <div style="font-size:12px;margin-top:4px">3.2 acres · Hullahalli · Paddy · <span class="badge badge-green" style="padding:1px 6px">Active</span></div>
+              </div>
+              <div style="padding:10px;background:var(--card2);border-radius:var(--radius)">
+                <div style="font-family:monospace;color:var(--accent);font-weight:600">MYS-8822</div>
+                <div style="font-size:12px;margin-top:4px">2.1 acres · T. Narsipur · Paddy · <span class="badge badge-green" style="padding:1px 6px">Active</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end content (NEW CLOSING) -->
+  </div><!-- end main -->
+</div><!-- end app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modifyModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Confirm Modification <span class="modal-close" onclick="closeModal('modifyModal')"><i class="ti ti-x"></i></span></div>
+    <div class="warn-box"><i class="ti ti-shield-exclamation"></i> You are about to modify a protected government record. This action is irreversible and fully audited.</div>
+    <div class="change-preview">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Final Changes</div>
+      <div class="change-row"><span style="width:80px;color:var(--text3)">Crop:</span><span class="change-old">Paddy</span><i class="ti ti-arrow-right" style="font-size:12px;color:var(--text3)"></i><span class="change-new">Cotton</span></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Enter Password to Confirm</label>
+      <div class="input-icon"><i class="ti ti-lock"></i><input class="form-input" type="password" placeholder="Your login password"></div>
+    </div>
+    <div style="background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin:12px 0;text-align:center">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">OTP sent to registered mobile (+91 ****7821)</div>
+      <div class="otp-inputs" style="justify-content:center">
+        <input class="otp-input" maxlength="1"><input class="otp-input" maxlength="1"><input class="otp-input" maxlength="1">
+        <input class="otp-input" maxlength="1"><input class="otp-input" maxlength="1"><input class="otp-input" maxlength="1">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="submitModify()"><i class="ti ti-check"></i> Confirm & Submit</button>
+      <button class="btn btn-ghost" onclick="closeModal('modifyModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addUserModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Add New User <span class="modal-close" onclick="closeModal('addUserModal')"><i class="ti ti-x"></i></span></div>
+    <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" placeholder="e.g. Suresh Kumar"></div>
+    <div class="form-group"><label class="form-label">Employee ID</label><input class="form-input" placeholder="e.g. CLK-2024-010"></div>
+    <div class="form-group"><label class="form-label">Role</label><select class="form-input"><option>Data Entry Clerk</option><option>Revenue Officer</option><option>District Inspector</option><option>Farmer</option></select></div>
+    <div class="form-group"><label class="form-label">District</label><select class="form-input"><option>Mysuru</option><option>Bengaluru Rural</option><option>Kolar</option><option>Hassan</option><option>Bidar</option></select></div>
+    <div class="form-group"><label class="form-label">Mobile</label><input class="form-input" placeholder="+91 XXXXXXXXXX"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeModal('addUserModal')"><i class="ti ti-user-plus"></i> Create Account</button>
+      <button class="btn btn-ghost" onclick="closeModal('addUserModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="successModal" style="display:none">
+  <div class="modal" style="text-align:center;padding:36px">
+    <div style="width:60px;height:60px;background:var(--accent-glow);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:28px;color:var(--accent);border:2px solid var(--accent);margin-bottom:16px"><i class="ti ti-check"></i></div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">Record Updated Successfully</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:4px">Modification has been cryptographically logged and audited</div>
+    <div style="font-size:12px;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-message"></i> SMS notification sent to farmer Ramaiah K.</div>
+    <div class="sig-box" style="text-align:left;margin-bottom:12px">
+      <div style="margin-bottom:4px;color:var(--text3)">SHA-256 RECORD HASH</div>
+      <div id="recordHash">3f8a2b1c9d4e7f2a1b8c3d9e4f7a2b1c</div>
+      <div style="margin-top:8px;margin-bottom:4px;color:var(--text3)">DIGITAL SIGNATURE</div>
+      <div style="color:var(--text2)">Signed by: <span style="color:var(--accent)">OFF-012 (Priya Venkat)</span></div>
+      <div style="color:var(--text2)">Timestamp: <span id="sigTimestamp"></span></div>
+      <div style="color:var(--accent);margin-top:4px">✔ Signature Verified · Block #48,292</div>
+    </div>
+    <button class="btn btn-primary" onclick="closeModal('successModal')" style="width:100%;justify-content:center">Done</button>
+  </div>
+</div>
+
+<script>
+// ---- TOAST SYSTEM ----
+function showToast(msg, type='success', duration=3500){
+  const icons = {success:'ti-check',error:'ti-x',warn:'ti-alert-triangle',info:'ti-info-circle'};
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<div class="toast-icon"><i class="ti ${icons[type]||icons.info}"></i></div><div class="toast-msg">${msg}</div><span class="toast-close" onclick="this.parentElement.remove()"><i class="ti ti-x"></i></span>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>{t.classList.add('removing');setTimeout(()=>t.remove(),300)},duration);
+}
+
+// ---- SHA-256 SIMULATION ----
+function simHash(input){
+  let h = 0;
+  for(let i=0;i<input.length;i++){h=((h<<5)-h)+input.charCodeAt(i);h|=0;}
+  return Math.abs(h).toString(16).padStart(8,'0')+Math.abs(h*31).toString(16).padStart(8,'0')+Math.abs(h*17).toString(16).padStart(8,'0')+Math.abs(h*7).toString(16).padStart(8,'0');
+}
+
+// ---- DATA ----
+const records = [
+  {survey:'MYS-4421',owner:'Ramaiah K.',district:'Mysuru',village:'Hullahalli',crop:'Paddy',area:'3.2',integrity:true,status:'verified',hash:'3f8a2b1c'},
+  {survey:'KLR-882',owner:'Anjamma S.',district:'Kolar',village:'Srinivaspur',crop:'Ragi',area:'1.8',integrity:true,status:'pending',hash:'7d9e1a4f'},
+  {survey:'HSN-1190',owner:'Krishnappa M.',district:'Hassan',village:'Arakalgud',crop:'Sugarcane',area:'5.1',integrity:false,status:'flagged',hash:'MISMATCH'},
+  {survey:'BGR-3301',owner:'Fatima B.',district:'Bengaluru Rural',village:'Doddaballapur',crop:'Cotton',area:'2.6',integrity:true,status:'verified',hash:'2c8f3b1a'},
+  {survey:'BDR-447',owner:'Venkatesh R.',district:'Bidar',village:'Humnabad',crop:'Wheat',area:'4.0',integrity:true,status:'pending',hash:'9a2d5e7c'},
+  {survey:'MYS-8822',owner:'Sundamma T.',district:'Mysuru',village:'T. Narsipur',crop:'Paddy',area:'2.1',integrity:true,status:'verified',hash:'4b6c1f8e'},
+  {survey:'KLR-993',owner:'Narasimha G.',district:'Kolar',village:'Mulbagal',crop:'Cotton',area:'3.7',integrity:false,status:'flagged',hash:'MISMATCH'},
+  {survey:'HSN-2251',owner:'Meena P.',district:'Hassan',village:'Belur',crop:'Ragi',area:'1.2',integrity:true,status:'verified',hash:'6e3d9a2b'},
+  {survey:'BGR-7701',owner:'Raju C.',district:'Bengaluru Rural',village:'Magadi',crop:'Sugarcane',area:'6.3',integrity:true,status:'pending',hash:'1f7c4d8a'},
+  {survey:'BDR-889',owner:'Yellamma K.',district:'Bidar',village:'Basavakalyan',crop:'Wheat',area:'2.9',integrity:true,status:'verified',hash:'8b2e5c1d'},
+];
+
+const auditLogs = [
+  {id:'LOG-4892',user:'CLK-009',action:'Record Modified',record:'HSN-1190',old:'Paddy',nw:'Sugarcane',ip:'192.168.4.21',device:'Chrome/Win',time:'11:42 PM',status:'suspicious'},
+  {id:'LOG-4891',user:'OFF-012',action:'Record Approved',record:'MYS-4421',old:'—',nw:'—',ip:'10.0.1.14',device:'Edge/Win',time:'10:42 AM',status:'normal'},
+  {id:'LOG-4890',user:'Unknown',action:'Failed Login ×5',record:'—',old:'—',nw:'—',ip:'203.122.44.7',device:'—',time:'10:38 AM',status:'suspicious'},
+  {id:'LOG-4889',user:'CLK-003',action:'Crop Updated',record:'KLR-882',old:'Wheat',nw:'Ragi',ip:'10.0.1.9',device:'Firefox/Mac',time:'10:21 AM',status:'normal'},
+  {id:'LOG-4888',user:'ADM-001',action:'User Created',record:'—',old:'—',nw:'—',ip:'10.0.0.1',device:'Chrome/Win',time:'09:55 AM',status:'normal'},
+  {id:'LOG-4887',user:'CLK-009',action:'Ownership Change',record:'KLR-993',old:'Narasimha G.',nw:'Pending',ip:'192.168.4.21',device:'Chrome/Win',time:'09:40 AM',status:'suspicious'},
+  {id:'LOG-4886',user:'OFF-034',action:'Login — New IP',record:'—',old:'—',nw:'—',ip:'117.55.23.10',device:'Mobile/Chrome',time:'08:12 AM',status:'warning'},
+];
+
+const users = [
+  {id:'ADM-001',name:'Rajesh Naik',role:'System Admin',district:'All',lastLogin:'Today, 09:00',status:'active'},
+  {id:'OFF-012',name:'Priya Venkat',role:'Revenue Officer',district:'Mysuru',lastLogin:'Today, 10:42',status:'active'},
+  {id:'OFF-034',name:'Mohammed Irfan',role:'Revenue Officer',district:'Bidar',lastLogin:'Today, 08:12',status:'active'},
+  {id:'CLK-003',name:'Geetha S.',role:'Data Entry Clerk',district:'Kolar',lastLogin:'Today, 10:21',status:'active'},
+  {id:'CLK-009',name:'Shiva Kumar',role:'Data Entry Clerk',district:'Hassan',lastLogin:'11:42 PM',status:'suspended'},
+  {id:'FMR-1021',name:'Ramaiah K.',role:'Farmer',district:'Mysuru',lastLogin:'Yesterday',status:'active'},
+];
+
+const versions = [
+  {ver:'v3',by:'CLK-009',date:'May 8, 2026 – 11:42 PM',field:'Crop Type',old:'Paddy',nw:'Sugarcane',flag:true,sig:'OFF-012',sigVerified:false},
+  {ver:'v2',by:'CLK-003',date:'Mar 12, 2026 – 03:14 PM',field:'Area',old:'3.0 acres',nw:'3.2 acres',flag:false,sig:'OFF-012',sigVerified:true},
+  {ver:'v1',by:'ADM-001',date:'Jan 01, 2026 – 09:00 AM',field:'Record Created',old:'—',nw:'Original',flag:false,sig:'ADM-001',sigVerified:true},
+];
+
+const districts = ['Mysuru','Kolar','Hassan','Bengaluru Rural','Bidar','Dakshina Kannada','Shivamogga'];
+const riskLevels = [8,5,9,3,7,2,6];
+const heatColors = ['#1d9e7540','#ef9f2740','#ef9f27aa','#e24b4a40','#e24b4aaa','#1d9e7540','#e24b4a'];
+
+// ---- RENDER FUNCTIONS ----
+function renderRecords(){
+  const tbody = document.getElementById('recordsTable');
+  const searchInput = document.querySelector('#screen-records .search-bar input');
+  const q = searchInput ? searchInput.value.toLowerCase() : '';
+  const filtered = q ? records.filter(r=>r.survey.toLowerCase().includes(q)||r.owner.toLowerCase().includes(q)||r.district.toLowerCase().includes(q)) : records;
+  const isFarmer = currentRole === 'farmer';
+  tbody.innerHTML = filtered.map(r=>`<tr>
+    <td style="font-weight:600;color:var(--text)">${r.survey}</td>
+    <td>${r.owner}</td>
+    <td>${r.district}</td>
+    <td>${r.village}</td>
+    <td>${r.crop}</td>
+    <td>${r.area}</td>
+    <td>
+      ${r.integrity
+        ?`<span class="integrity-badge integrity-ok" style="font-size:11px;padding:3px 8px" title="SHA-256: ${r.hash}"><i class="ti ti-shield-check" style="font-size:12px"></i> Verified</span>`
+        :`<span class="integrity-badge integrity-fail" style="font-size:11px;padding:3px 8px" title="Hash mismatch!"><i class="ti ti-shield-x" style="font-size:12px"></i> Tampered</span>`}
+    </td>
+    <td><span class="badge ${r.status==='verified'?'badge-green':r.status==='pending'?'badge-warn':'badge-red'}">${r.status}</span></td>
+    <td>
+      ${isFarmer
+        ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="viewRecordHash('${r.survey}','${r.hash}','${r.integrity}')"><i class="ti ti-eye"></i> View</button>`
+        : `<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="navigate('modify',null);showToast('Record ${r.survey} loaded for editing','info')"><i class="ti ti-edit"></i></button>
+           <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="viewRecordHash('${r.survey}','${r.hash}','${r.integrity}')"><i class="ti ti-eye"></i></button>`
+      }
+    </td>
+  </tr>`).join('');
+}
+
+function viewRecordHash(survey, hash, integrity){
+  const msg = integrity==='true'||integrity===true
+    ? `<b>${survey}</b> SHA-256: <code style="color:var(--accent)">${hash}...</code> ✔ Integrity OK`
+    : `<b>${survey}</b> ❌ Hash mismatch — tampering detected!`;
+  showToast(msg, integrity==='true'||integrity===true ? 'success' : 'error', 5000);
+}
+
+function renderAudit(){
+  const tbody = document.getElementById('auditTable');
+  tbody.innerHTML = auditLogs.map(l=>`<tr>
+    <td style="font-size:11px;color:var(--text3)">${l.id}</td>
+    <td style="font-weight:500;color:var(--text)">${l.user}</td>
+    <td>${l.action}</td>
+    <td>${l.record}</td>
+    <td style="color:var(--danger)">${l.old}</td>
+    <td style="color:var(--accent)">${l.nw}</td>
+    <td style="font-family:monospace;font-size:11px">${l.ip}</td>
+    <td style="font-size:11px;color:var(--text3)">${l.device}</td>
+    <td style="font-size:11px">${l.time}</td>
+    <td><span class="badge ${l.status==='normal'?'badge-green':l.status==='suspicious'?'badge-red':'badge-warn'}">${l.status}</span></td>
+  </tr>`).join('');
+}
+
+function renderUsers(){
+  const tbody = document.getElementById('usersTable');
+  tbody.innerHTML = users.map(u=>`<tr>
+    <td style="font-family:monospace;font-size:12px;color:var(--text)">${u.id}</td>
+    <td style="font-weight:500">${u.name}</td>
+    <td><span class="badge ${u.role==='System Admin'?'badge-blue':u.role==='Revenue Officer'?'badge-warn':u.role==='Farmer'?'badge-green':'badge-gray'}">${u.role}</span></td>
+    <td>${u.district}</td>
+    <td style="font-size:12px;color:var(--text2)">${u.lastLogin}</td>
+    <td><span class="badge ${u.status==='active'?'badge-green':'badge-red'}">${u.status}</span></td>
+    <td><div style="display:flex;gap:4px">
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="showToast('Edit user ${u.id}','info')"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="toggleUserStatus('${u.id}')"><i class="ti ti-${u.status==='active'?'lock':'lock-open'}"></i></button>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;color:var(--danger)" onclick="showToast('User ${u.id} deletion requires admin confirmation','warn')"><i class="ti ti-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function toggleUserStatus(id){
+  const u = users.find(x=>x.id===id);
+  if(u){u.status = u.status==='active'?'suspended':'active';renderUsers();showToast(`User ${id} ${u.status==='active'?'reactivated':'suspended'}`,u.status==='active'?'success':'warn');}
+}
+
+function renderHistory(){
+  const div = document.getElementById('versionHistory');
+  div.innerHTML = versions.map((v,i)=>`<div style="display:flex;gap:14px;padding:14px 0;border-bottom:${i<versions.length-1?'1px solid var(--border)':'none'}">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:34px;height:34px;border-radius:50%;background:${v.flag?'#e24b4a22':'var(--accent-glow)'};border:2px solid ${v.flag?'var(--danger)':'var(--accent)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${v.flag?'var(--danger)':'var(--accent)'}">${v.ver}</div>
+      ${i<versions.length-1?`<div style="width:1px;flex:1;min-height:20px;background:var(--border)"></div>`:''}
+    </div>
+    <div style="flex:1;padding-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${v.field}</div>
+        ${v.flag?`<span class="badge badge-red"><i class="ti ti-alert-triangle" style="font-size:11px"></i> Flagged</span>`:`<span class="badge badge-green"><i class="ti ti-check" style="font-size:11px"></i> Verified</span>`}
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px">By: <strong>${v.by}</strong> · ${v.date}</div>
+      ${v.old!=='—'?`<div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:6px"><span class="change-old">${v.old}</span><i class="ti ti-arrow-right" style="font-size:12px;color:var(--text3)"></i><span class="change-new">${v.nw}</span></div>`:''}
+      <div style="font-size:11px;color:${v.sigVerified?'var(--accent)':'var(--danger)'}"><i class="ti ti-${v.sigVerified?'signature':'signature-off'}" style="font-size:11px"></i> Signed by ${v.sig} · ${v.sigVerified?'✔ Signature Verified':'✗ Signature Invalid'}</div>
+      ${i>0?`<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;margin-top:8px" onclick="showToast('Restore to ${v.ver} requires Officer approval','warn')"><i class="ti ti-history"></i> Restore this version</button>`:''}
+    </div>
+  </div>`).join('');
+
+  // Diff table
+  const diffTb = document.getElementById('diffTable');
+  if(diffTb){
+    const diffs = [
+      {field:'Crop Type',old:'Paddy',nw:'Sugarcane',by:'CLK-009',changed:true},
+      {field:'Area',old:'3.2 acres',nw:'3.2 acres',by:'—',changed:false},
+      {field:'Owner',old:'Ramaiah K.',nw:'Ramaiah K.',by:'—',changed:false},
+      {field:'Insurance',old:'Active',nw:'Active',by:'—',changed:false},
+      {field:'District',old:'Mysuru',nw:'Mysuru',by:'—',changed:false},
+    ];
+    diffTb.innerHTML = diffs.map(d=>`<tr>
+      <td style="font-weight:600;color:var(--text)">${d.field}</td>
+      <td class="${d.changed?'diff-old':''}" style="padding:8px 14px">${d.old}</td>
+      <td class="${d.changed?'diff-new':''}" style="padding:8px 14px">${d.nw}</td>
+      <td style="font-size:12px;color:var(--text2)">${d.by}</td>
+      <td>${d.changed?`<span class="badge badge-red"><i class="ti ti-alert-triangle" style="font-size:11px"></i> Modified</span>`:`<span class="badge badge-green">Unchanged</span>`}</td>
+    </tr>`).join('');
+  }
+}
+
+let diffVisible = false;
+function toggleDiff(){
+  diffVisible = !diffVisible;
+  document.getElementById('diffView').style.display = diffVisible?'block':'none';
+  showToast(diffVisible?'Diff view enabled':'Diff view hidden','info');
+}
+
+function renderHeatmap(){
+  const grid = document.getElementById('heatmapGrid');
+  const colors = ['#1d9e7530','#1d9e7560','#ef9f2770','#ef9f27aa','#e24b4a50','#e24b4a80','#e24b4a'];
+  grid.innerHTML = districts.map((d,i)=>`<div class="heat-cell" style="background:${colors[riskLevels[i]-1]};height:44px;flex-direction:column;gap:2px;font-size:9px" title="${d}: Risk ${riskLevels[i]}/9">
+    <span style="font-size:9px;color:var(--text2);text-align:center;line-height:1.1">${d.split(' ')[0]}</span>
+    <span style="font-weight:700;font-size:11px;color:var(--text)">${riskLevels[i]}</span>
+  </div>`).join('');
+}
+
+function renderAllAlerts(){
+  const div = document.getElementById('allAlerts');
+  const alerts = [
+    {type:'critical',icon:'ti-bolt',title:'Bulk Modification — Insider Threat',desc:'CLK-009 modified 45 records in 3 minutes. Activity exceeds 5σ from mean.',time:'2 min ago · 192.168.4.21'},
+    {type:'critical',icon:'ti-shield-x',title:'Record Integrity Failure — HSN-1190',desc:'Digital signature mismatch detected. Record may have been tampered externally.',time:'18 min ago · Hassan District'},
+    {type:'warning',icon:'ti-moon',title:'Off-Hours Access — 02:34 AM',desc:'Login outside permitted hours (9 AM–6 PM) from Bidar district office network.',time:'1 hr ago'},
+    {type:'warning',icon:'ti-shield-exclamation',title:'5 Failed Login Attempts',desc:'Brute-force pattern detected from external IP 203.122.44.7. Auto-blocked.',time:'1.5 hr ago'},
+    {type:'info',icon:'ti-map-pin',title:'New Location Login — OFF-034',desc:'Login from unregistered IP range. Multi-factor authentication was triggered.',time:'3 hr ago'},
+    {type:'info',icon:'ti-user',title:'Password Reset Request',desc:'CLK-003 requested a password reset via registered mobile OTP.',time:'5 hr ago'},
+  ];
+  div.innerHTML = alerts.map(a=>`<div class="alert-item ${a.type}" style="cursor:pointer">
+    <div class="alert-icon ${a.type}"><i class="ti ${a.icon}"></i></div>
+    <div style="flex:1">
+      <div class="alert-title">${a.title}</div>
+      <div class="alert-desc">${a.desc}</div>
+      <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> ${a.time}</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      ${a.type==='critical'?`<button class="btn btn-danger" style="padding:5px 10px;font-size:11px" onclick="showToast('User blocked. Incident escalated.','success')"><i class="ti ti-lock"></i> Block</button>`:''}
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="this.closest('.alert-item').remove();showToast('Alert dismissed','info')"><i class="ti ti-check"></i> Dismiss</button>
+    </div>
+  </div>`).join('');
+}
+
+function renderAnalytics(){
+  const pie = document.getElementById('pieChart');
+  const activities = [
+    {label:'Normal Modifications',val:74,color:'var(--accent)'},
+    {label:'Failed Logins',val:12,color:'var(--danger)'},
+    {label:'Suspicious Activity',val:9,color:'var(--warn)'},
+    {label:'System Actions',val:5,color:'var(--info)'},
+  ];
+  pie.innerHTML = activities.map(a=>`<div class="progress-wrap">
+    <div class="progress-label"><span>${a.label}</span><span>${a.val}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${a.val}%;background:${a.color}"></div></div>
+  </div>`).join('');
+
+  const risk = document.getElementById('districtRisk');
+  risk.innerHTML = districts.map((d,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="width:130px;font-size:12px;color:var(--text2)">${d}</span>
+    <div class="progress-bar" style="flex:1;height:8px"><div class="progress-fill" style="width:${riskLevels[i]*11}%;background:${riskLevels[i]>7?'var(--danger)':riskLevels[i]>4?'var(--warn)':'var(--accent)'}"></div></div>
+    <span style="font-size:12px;width:20px;color:var(--text)">${riskLevels[i]}</span>
+  </div>`).join('');
+}
+
+function renderFraud(){
+  const sus = document.getElementById('suspiciousUsers');
+  const susData = [
+    {user:'CLK-009',name:'Shiva Kumar',acts:52,risk:'Critical'},
+    {user:'OFF-034',name:'Mohammed Irfan',acts:8,risk:'Medium'},
+    {user:'CLK-007',name:'Ravi S.',acts:4,risk:'Low'},
+  ];
+  sus.innerHTML = susData.map(s=>`<div class="alert-item ${s.risk==='Critical'?'critical':s.risk==='Medium'?'warning':'info'}" style="margin-bottom:8px">
+    <div class="user-avatar" style="width:36px;height:36px;flex-shrink:0;font-size:12px;background:${s.risk==='Critical'?'#e24b4a22':s.risk==='Medium'?'#ef9f2722':'#378add22'};color:${s.risk==='Critical'?'var(--danger)':s.risk==='Medium'?'var(--warn)':'var(--info)'}">${s.user.split('-')[0]}</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600;color:var(--text)">${s.user} — ${s.name}</div>
+      <div style="font-size:12px;color:var(--text2)">${s.acts} anomalous actions this session</div>
+    </div>
+    <span class="badge ${s.risk==='Critical'?'badge-red':s.risk==='Medium'?'badge-warn':'badge-blue'}">${s.risk}</span>
+  </div>`).join('');
+
+  const att = document.getElementById('attackPatterns');
+  const patterns = [
+    {icon:'ti-bolt',label:'Bulk Modifications',count:45,type:'critical'},
+    {icon:'ti-moon',label:'Off-Hours Access',count:3,type:'warning'},
+    {icon:'ti-repeat',label:'Brute-Force Logins',count:5,type:'critical'},
+    {icon:'ti-map-pin',label:'Unknown Location',count:1,type:'info'},
+  ];
+  att.innerHTML = patterns.map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+    <div class="alert-icon ${p.type}" style="width:32px;height:32px;border-radius:8px"><i class="ti ${p.icon}"></i></div>
+    <div style="flex:1;font-size:13px;color:var(--text)">${p.label}</div>
+    <span class="badge ${p.type==='critical'?'badge-red':p.type==='warning'?'badge-warn':'badge-blue'}">${p.count}x</span>
+  </div>`).join('');
+
+  // AI Risk Score factors
+  const rf = document.getElementById('aiRiskFactors');
+  const factors = [
+    {label:'Bulk modifications (45 records)',score:40,color:'var(--danger)'},
+    {label:'Off-hours login (11:42 PM)',score:20,color:'var(--warn)'},
+    {label:'New IP range detected',score:15,color:'var(--warn)'},
+    {label:'Hassan district anomaly',score:10,color:'var(--info)'},
+    {label:'Ownership change pattern',score:5,color:'var(--info)'},
+  ];
+  rf.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Risk Breakdown</div>` +
+    factors.map(f=>`<div class="risk-factor">
+      <span style="color:var(--text2)">${f.label}</span>
+      <span style="color:${f.color};font-weight:600;font-family:monospace">+${f.score}</span>
+    </div>`).join('');
+}
+
+// ---- COMMAND CENTER ----
+const liveFeedData = [
+  {color:'var(--danger)',msg:'CLK-009 attempted to access OFF-012 records','time':'just now'},
+  {color:'var(--accent)',msg:'Record MYS-4421 integrity verified — hash match','time':'1m ago'},
+  {color:'var(--warn)',msg:'Off-hours login detected from Bidar office','time':'2m ago'},
+  {color:'var(--danger)',msg:'Bulk modification alert: 45 records in 3 min','time':'4m ago'},
+  {color:'var(--info)',msg:'OFF-034 authenticated via OTP from new location','time':'6m ago'},
+  {color:'var(--accent)',msg:'System backup completed — 1,24,890 records','time':'10m ago'},
+  {color:'var(--danger)',msg:'Brute-force blocked: 203.122.44.7 (5 attempts)','time':'12m ago'},
+];
+
+function renderCommandCenter(){
+  const feed = document.getElementById('liveFeed');
+  if(!feed) return;
+  feed.innerHTML = liveFeedData.map(f=>`<div class="live-feed-item">
+    <div class="live-dot" style="background:${f.color}"></div>
+    <div style="flex:1;color:var(--text)">${f.msg}</div>
+    <div style="color:var(--text3);white-space:nowrap">${f.time}</div>
+  </div>`).join('');
+
+  // Geo monitor
+  const geo = document.getElementById('geoMonitor');
+  const geoEvents = [
+    {user:'OFF-034',from:'Bidar',to:'Bengaluru',time:'08:12 AM',flag:true,msg:'Logged in from Bengaluru 45 min after Bidar login'},
+    {user:'CLK-009',from:'Hassan (registered)',to:'192.168.4.21 (Hassan)',time:'11:42 PM',flag:false,msg:'Location within expected range but off-hours'},
+    {user:'Unknown',from:'External IP',to:'203.122.44.7 (Mumbai)',time:'10:38 AM',flag:true,msg:'External brute-force — IP blocked'},
+  ];
+  geo.innerHTML = geoEvents.map(g=>`<div class="geo-event" style="border-left-color:${g.flag?'var(--danger)':'var(--warn)'}">
+    <div style="width:32px;height:32px;border-radius:8px;background:${g.flag?'#e24b4a22':'#ef9f2722'};display:flex;align-items:center;justify-content:center;color:${g.flag?'var(--danger)':'var(--warn)'};flex-shrink:0"><i class="ti ti-map-pin" style="font-size:16px"></i></div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600;color:var(--text)">${g.user} · <span style="font-size:11px;color:var(--text3)">${g.time}</span></div>
+      <div style="font-size:12px;color:var(--text2)">${g.msg}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${g.from} → ${g.to}</div>
+    </div>
+    ${g.flag?`<span class="badge badge-red">⚠ Anomaly</span>`:`<span class="badge badge-warn">Review</span>`}
+  </div>`).join('');
+
+  // Simple canvas chart simulation
+  drawLiveChart();
+}
+
+function drawLiveChart(){
+  const c = document.getElementById('liveChart');
+  if(!c||!c.getContext) return;
+  const ctx = c.getContext('2d');
+  c.width = c.offsetWidth||400;
+  const w=c.width,h=120;
+  ctx.clearRect(0,0,w,h);
+  const normalData = [12,18,8,22,15,10,25,18,12,20,8,14,22,16,10];
+  const threatData = [0,0,2,0,1,0,0,3,0,1,0,0,2,0,1];
+  const barW = w/normalData.length-3;
+  normalData.forEach((v,i)=>{
+    const x=i*(barW+3);
+    ctx.fillStyle='#1d9e7540';
+    ctx.beginPath();ctx.roundRect(x,h-v*4,barW,v*4,2);ctx.fill();
+    if(threatData[i]>0){
+      ctx.fillStyle='#e24b4a80';
+      ctx.beginPath();ctx.roundRect(x,h-threatData[i]*12,barW,threatData[i]*12,2);ctx.fill();
+    }
+  });
+}
+
+function freezeAllRecords(){
+  showToast('🔒 Emergency freeze activated. All modifications locked pending review.','warn',5000);
+}
+function forceLogoutSuspicious(){
+  showToast('⚡ Force-logout sent to CLK-009, OFF-034. Sessions terminated.','success',4000);
+}
+function exportSecurityReport(){
+  showToast('📄 Security report queued for download (PDF)','info');
+}
+
+// ---- INCIDENT RESPONSE ----
+function renderIncidents(){
+  const el = document.getElementById('incidentList');
+  if(!el) return;
+  const incidents = [
+    {id:'INC-2026-001',user:'CLK-009',name:'Shiva Kumar',type:'Insider Threat',severity:'Critical',desc:'Bulk modification of 45 records outside business hours. Ownership changes flagged.',time:'May 8, 11:42 PM'},
+    {id:'INC-2026-002',user:'Unknown',name:'External Actor',type:'Brute Force',severity:'High',desc:'5 failed login attempts from external IP 203.122.44.7. IP auto-blocked.',time:'May 8, 10:38 AM'},
+  ];
+  el.innerHTML = incidents.map(inc=>`<div class="card" style="margin-bottom:14px;border-color:${inc.severity==='Critical'?'var(--danger)':'var(--warn)'}">
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div style="background:${inc.severity==='Critical'?'#e24b4a22':'#ef9f2722'};border-radius:10px;padding:10px;color:${inc.severity==='Critical'?'var(--danger)':'var(--warn)'}"><i class="ti ti-alert-octagon" style="font-size:22px"></i></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span style="font-family:monospace;font-size:12px;color:var(--accent)">${inc.id}</span>
+          <span class="badge ${inc.severity==='Critical'?'badge-red':'badge-warn'}">${inc.severity}</span>
+          <span class="badge badge-gray">${inc.type}</span>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">${inc.user} — ${inc.name}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${inc.desc}</div>
+        <div style="font-size:11px;color:var(--text3)">${inc.time}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="incident-btn incident-btn-red" onclick="showToast('${inc.user} account frozen. Access revoked.','success')"><i class="ti ti-freeze-row"></i> Freeze Account</button>
+      <button class="incident-btn incident-btn-warn" onclick="showToast('All records by ${inc.user} quarantined for review.','warn')"><i class="ti ti-database-x"></i> Quarantine Records</button>
+      <button class="incident-btn incident-btn-blue" onclick="createCaseFrom('${inc.id}','${inc.user}','${inc.severity}')"><i class="ti ti-briefcase"></i> Escalate to Case</button>
+      <button class="incident-btn incident-btn-red" onclick="showToast('${inc.user} force-logged out.','success')"><i class="ti ti-logout"></i> Force Logout</button>
+    </div>
+  </div>`).join('');
+}
+
+// ---- CASE MANAGEMENT ----
+let cases = [
+  {id:'CASE-104',user:'CLK-009',investigator:'OFF-012',severity:'Critical',status:'Open',desc:'Bulk record modification — possible insider fraud',created:'May 8, 2026'},
+  {id:'CASE-103',user:'OFF-034',investigator:'ADM-001',severity:'Medium',status:'In Review',desc:'New location login from unregistered IP range',created:'May 7, 2026'},
+];
+
+function renderCases(){
+  const el = document.getElementById('caseList');
+  if(!el) return;
+  el.innerHTML = cases.map(c=>`<div class="case-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="case-id">${c.id}</span>
+        <span class="badge ${c.severity==='Critical'?'badge-red':c.severity==='High'?'badge-warn':'badge-blue'}">${c.severity}</span>
+        <span class="badge ${c.status==='Open'?'badge-red':c.status==='In Review'?'badge-warn':'badge-green'}">${c.status}</span>
+      </div>
+      <span style="font-size:11px;color:var(--text3)">${c.created}</span>
+    </div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:4px">${c.desc}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Subject: <strong>${c.user}</strong> · Investigator: <strong>${c.investigator}</strong></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showToast('${c.id} updated to Closed','success');this.closest('.case-card').querySelector('.badge:last-of-type').textContent='Closed'"><i class="ti ti-check"></i> Close Case</button>
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showToast('Assigned investigator for ${c.id}','info')"><i class="ti ti-user-check"></i> Reassign</button>
+    </div>
+  </div>`).join('');
+}
+
+function createCase(){
+  const id = 'CASE-'+Math.floor(100+Math.random()*900);
+  cases.unshift({id,user:'ADM-001',investigator:'ADM-001',severity:'Low',status:'Open',desc:'Manually created investigation case',created:'May 8, 2026'});
+  renderCases();
+  showToast(`Case ${id} created successfully`,'success');
+}
+
+function createCaseFrom(incId, user, severity){
+  const id = 'CASE-'+Math.floor(100+Math.random()*900);
+  cases.unshift({id,user,investigator:'ADM-001',severity,status:'Open',desc:`Escalated from incident ${incId}`,created:'May 8, 2026'});
+  showToast(`Case ${id} created from ${incId}`,'success');
+  navigate('cases',null);
+}
+
+// ---- SYSTEM HEALTH ----
+function renderHealth(){
+  const services = document.getElementById('healthServices');
+  const metrics = document.getElementById('healthMetrics');
+  const events = document.getElementById('healthEvents');
+  if(!services) return;
+
+  const serviceData = [
+    {name:'PostgreSQL Database',status:'ok',uptime:'99.97%'},
+    {name:'Authentication API',status:'ok',uptime:'100%'},
+    {name:'Record Integrity Engine',status:'ok',uptime:'99.91%'},
+    {name:'Audit Log Service',status:'ok',uptime:'100%'},
+    {name:'Alert System',status:'warn',uptime:'98.2%'},
+    {name:'Backup Service',status:'ok',uptime:'99.99%'},
+  ];
+  services.innerHTML = serviceData.map(s=>`<div class="health-row">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="health-dot health-${s.status}"></div>
+      <span style="color:var(--text)">${s.name}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--text3)">Uptime: ${s.uptime}</span>
+      <span class="badge ${s.status==='ok'?'badge-green':'badge-warn'}">${s.status==='ok'?'Operational':'Degraded'}</span>
+    </div>
+  </div>`).join('');
+
+  metrics.innerHTML = [
+    {label:'Active Users Now',val:'312',color:'var(--accent)'},
+    {label:'Database Size',val:'4.2 GB',color:'var(--info)'},
+    {label:'API Requests/min',val:'847',color:'var(--text)'},
+    {label:'Blocked Attacks (24h)',val:'47',color:'var(--danger)'},
+    {label:'Avg Response Time',val:'1.4s',color:'var(--accent)'},
+    {label:'System Uptime',val:'99.96%',color:'var(--accent)'},
+  ].map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+    <span style="font-size:13px;color:var(--text2)">${m.label}</span>
+    <span style="font-size:14px;font-weight:600;color:${m.color};font-family:Georgia,serif">${m.val}</span>
+  </div>`).join('');
+
+  events.innerHTML = [
+    {time:'11:42 PM',event:'Bulk modification attempt — CLK-009 — Blocked',type:'danger'},
+    {time:'10:38 AM',event:'Brute-force attack from 203.122.44.7 — Auto-blocked',type:'danger'},
+    {time:'09:55 AM',event:'New user FMR-2021 created by ADM-001',type:'info'},
+    {time:'09:00 AM',event:'Daily integrity scan completed — 2 failures found',type:'warn'},
+    {time:'08:00 AM',event:'System backup completed successfully',type:'success'},
+  ].map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)">
+    <span style="font-size:11px;color:var(--text3);width:70px">${e.time}</span>
+    <div class="live-dot" style="background:${e.type==='danger'?'var(--danger)':e.type==='warn'?'var(--warn)':e.type==='info'?'var(--info)':'var(--accent)'};flex-shrink:0"></div>
+    <span style="font-size:12px;color:var(--text2)">${e.event}</span>
+  </div>`).join('');
+}
+
+// ---- FARMER PANEL ----
+function renderFarmerPanel(){
+  const rec = document.getElementById('farmerRecords');
+  const notifs = document.getElementById('farmerNotifs');
+  const sig = document.getElementById('farmerSig');
+  if(!rec) return;
+
+  rec.innerHTML = records.filter(r=>r.owner.includes('Ramaiah')).map(r=>`<div style="background:var(--card2);border-radius:var(--radius);padding:14px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-weight:700;color:var(--accent);font-family:monospace">${r.survey}</span>
+      ${r.integrity?`<span class="integrity-badge integrity-ok" style="font-size:11px"><i class="ti ti-shield-check" style="font-size:11px"></i> Verified</span>`:`<span class="integrity-badge integrity-fail" style="font-size:11px">Tampered</span>`}
+    </div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.8">
+      <div>Crop: <span style="color:var(--text)">${r.crop}</span> · Area: <span style="color:var(--text)">${r.area} acres</span></div>
+      <div>Village: <span style="color:var(--text)">${r.village}</span> · District: <span style="color:var(--text)">${r.district}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="downloadSignedPDF('${r.survey}')"><i class="ti ti-download"></i> Download PDF</button>
+      <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showQR('${r.survey}')"><i class="ti ti-qrcode"></i> QR Verify</button>
+    </div>
+  </div>`).join('');
+
+  notifs.innerHTML = [
+    {time:'May 8, 11:42 PM',msg:'Your record MYS-4421 crop type was modified to Sugarcane',type:'warn'},
+    {time:'May 8, 10:42 AM',msg:'Record MYS-4421 verified and approved by Revenue Officer',type:'success'},
+    {time:'Mar 12, 3:14 PM',msg:'Area updated from 3.0 to 3.2 acres — Kolar office',type:'info'},
+    {time:'Jan 1, 9:00 AM',msg:'Your land record was officially registered in the system',type:'success'},
+  ].map(n=>`<div class="farmer-notif">
+    <div class="live-dot" style="background:${n.type==='success'?'var(--accent)':n.type==='warn'?'var(--warn)':'var(--info)'};flex-shrink:0;margin-top:4px"></div>
+    <div>
+      <div style="font-size:12px;color:var(--text)">${n.msg}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${n.time}</div>
+    </div>
+  </div>`).join('');
+
+  const h = simHash('MYS-4421-Ramaiah-Paddy-3.2');
+  sig.innerHTML = `<div class="sig-box" style="margin-bottom:12px">
+    <div style="margin-bottom:6px;color:var(--text3)">RECORD: MYS-4421 · SHA-256 INTEGRITY HASH</div>
+    <div style="word-break:break-all;margin-bottom:8px">${h}</div>
+    <div style="color:var(--text3);margin-bottom:4px">DIGITAL SIGNATURE</div>
+    <div>Signed by: <span style="color:var(--accent)">Revenue Officer OFF-012 (Priya Venkat, Mysuru)</span></div>
+    <div>Timestamp: <span style="color:var(--text2)">Mar 12, 2026 — 03:15:42 PM IST</span></div>
+    <div style="margin-top:8px;color:var(--accent)">✔ Signature Verified · Government of Karnataka · Block #47,108</div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-primary" onclick="downloadSignedPDF('MYS-4421')"><i class="ti ti-download"></i> Download Signed Record PDF</button>
+    <button class="btn btn-ghost" onclick="showQR('MYS-4421')"><i class="ti ti-qrcode"></i> Generate Verification QR</button>
+  </div>`;
+}
+
+function downloadSignedPDF(survey){showToast(`Signed PDF for ${survey} downloading...`,'success');}
+function showQR(survey){showToast(`QR code for ${survey} — opens official verification page`,'info',4000);}
+
+// ---- NAVIGATION ----
+function navigate(screen, el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(n=>{
+      if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(`'${screen}'`)) n.classList.add('active');
+    });
+  }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById('screen-'+screen);
+  if(target) target.classList.add('active');
+  const titles = {
+    dashboard:'Admin Dashboard',alerts:'Reports',records:'Land Records',
+    modify:'Modify Record',audit:'Audit Logs',history:'Version History',
+    analytics:'Security Analytics',fraud:'Fraud Alerts',users:'User Management',
+    command:'Fraud Monitoring',incident:'Approvals',
+    cases:'Case Management',health:'Settings',
+    'officer-dashboard':'Officer Dashboard',
+    'officer-approvals':'Approval Center',
+    'officer-history':'Version History',
+    'officer-notifs':'Notifications',
+    'officer-profile':'My Profile',
+    'clerk-dashboard':'Clerk Dashboard',
+    'clerk-delete':'Delete Records',
+    'clerk-forms':'Forms Management',
+    'clerk-history':'My History',
+    'clerk-profile':'My Profile',
+    'farmer-dashboard':'Farmer Dashboard',
+    farmer:'My Land Records',
+    'farmer-insurance':'Insurance Status',
+    'farmer-notifs':'Notifications',
+    'farmer-profile':'My Profile',
+  };
+  document.getElementById('pageTitle').textContent = titles[screen]||screen;
+  document.getElementById('breadcrumb').textContent = 'Home / '+(titles[screen]||screen);
+  
+  // Close mobile sidebar
+  document.querySelector('.sidebar').classList.remove('open');
+
+  // Render on demand
+  if(screen==='command') renderCommandCenter();
+  if(screen==='incident') renderIncidents();
+  if(screen==='cases') renderCases();
+  if(screen==='health') renderHealth();
+  if(screen==='farmer') renderFarmerPanel();
+  if(screen==='farmer-notifs') renderFarmerNotifsFull();
+  if(screen==='fraud') renderFraudActionTable();
+  if(screen==='officer-approvals') renderApprovals();
+  if(screen==='officer-history') renderOfficerHistory();
+  if(screen==='officer-notifs') renderOfficerNotifs();
+  if(screen==='clerk-history') renderClerkHistory();
+  if(screen==='clerk-forms') renderClerkForms();
+  if(screen==='clerk-delete') renderClerkDeleteTable();
+}
+
+
+// ---- OFFICER: FRAUD ACTION TABLE ----
+let fraudCases = [
+  {id:'FA-001',alert:'Bulk modification — 45 records in 3 min',user:'CLK-009',risk:'HIGH',status:'Pending'},
+  {id:'FA-002',alert:'Hash mismatch detected — HSN-1190',user:'CLK-009',risk:'HIGH',status:'Pending'},
+  {id:'FA-003',alert:'Off-hours login — 02:34 AM',user:'OFF-034',risk:'MEDIUM',status:'Pending'},
+  {id:'FA-004',alert:'Ownership change flagged — KLR-993',user:'CLK-009',risk:'HIGH',status:'Approved'},
+  {id:'FA-005',alert:'Login from new IP range',user:'OFF-034',risk:'LOW',status:'Dismissed'},
+];
+
+function renderFraudActionTable(){
+  const tbody = document.getElementById('fraudActionTable');
+  if(!tbody) return;
+  tbody.innerHTML = fraudCases.map(c=>`<tr>
+    <td style="font-size:12px;color:var(--text)">${c.alert}</td>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${c.user}</td>
+    <td><span class="badge ${c.risk==='HIGH'?'badge-red':c.risk==='MEDIUM'?'badge-warn':'badge-blue'}">${c.risk}</span></td>
+    <td><span class="badge ${c.status==='Pending'?'badge-warn':c.status==='Approved'?'badge-red':c.status==='Dismissed'?'badge-green':'badge-blue'}">${c.status}</span></td>
+    <td>
+      ${c.status==='Pending'?`
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn btn-ghost" style="padding:4px 9px;font-size:11px;color:var(--danger);border-color:var(--danger)" onclick="officerAction('${c.id}','Approved')"><i class="ti ti-check"></i> Approve</button>
+        <button class="btn btn-ghost" style="padding:4px 9px;font-size:11px" onclick="officerAction('${c.id}','Dismissed')"><i class="ti ti-x"></i> Dismiss</button>
+        <button class="btn btn-danger" style="padding:4px 9px;font-size:11px" onclick="officerBlockClerk('${c.user}','${c.user}')"><i class="ti ti-lock"></i> Block</button>
+      </div>`:
+      `<span style="font-size:12px;color:var(--text3)">Action taken</span>`}
+    </td>
+  </tr>`).join('');
+}
+
+function officerAction(caseId, action){
+  const c = fraudCases.find(x=>x.id===caseId);
+  if(c){
+    c.status = action;
+    addOfficerHistoryEntry(action==='Approved'?'Fraud Approved':'Case Dismissed', c.user, action==='Approved'?'Case confirmed as fraud':'Marked as false alert');
+    renderFraudActionTable();
+    showToast(`Case ${caseId} — ${action}`,'success');
+  }
+}
+
+function officerBlockClerk(userId, name){
+  addOfficerHistoryEntry('Clerk Blocked', userId, 'Account suspended');
+  showToast(`${userId} account blocked. Notification sent.`,'warn',4000);
+  renderOfficerHistory();
+}
+
+// ---- OFFICER: VERSION HISTORY (action log) ----
+let officerActions = [
+  {action:'Fraud Approved',target:'CLK-009 / FA-004',outcome:'Case confirmed',time:'May 8 · 11:50 AM'},
+  {action:'Case Dismissed',target:'OFF-034 / FA-003',outcome:'False alert — marked safe',time:'May 7 · 03:12 PM'},
+  {action:'Record Approved',target:'MYS-4421',outcome:'Ownership verified',time:'May 8 · 10:42 AM'},
+];
+
+function addOfficerHistoryEntry(action, target, outcome){
+  officerActions.unshift({action, target, outcome, time:'Just now'});
+}
+
+function renderOfficerHistory(){
+  const tbody = document.getElementById('officerHistoryTable');
+  if(!tbody) return;
+  tbody.innerHTML = officerActions.map(h=>`<tr>
+    <td style="font-weight:600;color:var(--text)">${h.action}</td>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${h.target}</td>
+    <td style="font-size:12px;color:var(--text2)">${h.outcome}</td>
+    <td style="font-size:11px;color:var(--text3)">${h.time}</td>
+  </tr>`).join('');
+}
+
+// ---- OFFICER: NOTIFICATIONS ----
+function renderOfficerNotifs(){
+  const div = document.getElementById('officerNotifList');
+  if(!div) return;
+  const notifs = [
+    {icon:'ti-bolt',type:'critical',msg:'🚨 New fraud detected — CLK-009 bulk modification alert',time:'2 min ago'},
+    {icon:'ti-alert-triangle',type:'warning',msg:'⚠ High risk ownership transfer — KLR-993 flagged for review',time:'18 min ago'},
+    {icon:'ti-lock',type:'info',msg:'🚫 Clerk CLK-009 blocked successfully — you took this action',time:'Pending'},
+    {icon:'ti-shield-check',type:'success',msg:'✔ Record MYS-4421 integrity verified and signed',time:'10:42 AM'},
+    {icon:'ti-map-pin',type:'info',msg:'📍 New location login — OFF-034 authenticated via MFA',time:'08:12 AM'},
+  ];
+  div.innerHTML = notifs.map(n=>`<div class="alert-item ${n.type==='critical'?'critical':n.type==='warning'?'warning':'info'}" style="margin-bottom:8px">
+    <div class="alert-icon ${n.type==='critical'?'critical':n.type==='warning'?'warning':'info'}"><i class="ti ${n.icon}"></i></div>
+    <div style="flex:1">
+      <div class="alert-desc" style="color:var(--text)">${n.msg}</div>
+      <div class="alert-time"><i class="ti ti-clock" style="font-size:11px"></i> ${n.time}</div>
+    </div>
+    <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="this.closest('.alert-item').remove();showToast('Notification dismissed','info')"><i class="ti ti-x"></i></button>
+  </div>`).join('');
+}
+
+// ---- OFFICER: APPROVAL CENTER ----
+function renderApprovals(){
+  const div = document.getElementById('approvalList');
+  if(!div) return;
+  const approvals = [
+    {id:'APR-201',type:'Fraud Review',desc:'CLK-009 bulk modification — 45 records outside hours',risk:'Critical',time:'May 8'},
+    {id:'APR-200',type:'Ownership Approval',desc:'Ownership transfer request for MYS-8822 — Ramaiah K. to Suresh K.',risk:'High',time:'May 8'},
+    {id:'APR-199',type:'Suspicious Modification',desc:'Hash mismatch on HSN-1190 — possible tampering',risk:'Critical',time:'May 8'},
+    {id:'APR-198',type:'Ownership Approval',desc:'Survey correction for BGR-7701 — area update 6.1 → 6.3 acres',risk:'Low',time:'May 7'},
+  ];
+  div.innerHTML = approvals.map(a=>`<div class="card" style="margin-bottom:12px;border-color:${a.risk==='Critical'?'var(--danger)':a.risk==='High'?'var(--warn)':'var(--border)'}">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:${a.risk==='Critical'?'#e24b4a22':'#ef9f2722'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-circle-check" style="font-size:18px;color:${a.risk==='Critical'?'var(--danger)':'var(--warn)'}"></i></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:monospace;font-size:12px;color:var(--accent)">${a.id}</span>
+          <span class="badge badge-gray">${a.type}</span>
+          <span class="badge ${a.risk==='Critical'?'badge-red':a.risk==='High'?'badge-warn':'badge-blue'}">${a.risk}</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);margin-bottom:4px">${a.desc}</div>
+        <div style="font-size:11px;color:var(--text3)">${a.time}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-primary" style="padding:6px 12px;font-size:12px" onclick="approveItem('${a.id}')"><i class="ti ti-check"></i> Approve</button>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="dismissItem('${a.id}')"><i class="ti ti-x"></i> Dismiss</button>
+    </div>
+  </div>`).join('');
+}
+
+function approveItem(id){
+  showToast(`${id} approved — audit trail updated`,'success');
+  addOfficerHistoryEntry('Approval Granted', id, 'Request approved');
+}
+function dismissItem(id){
+  showToast(`${id} dismissed`,'info');
+  addOfficerHistoryEntry('Approval Dismissed', id, 'Request rejected');
+}
+
+// ---- CLERK: DELETE TABLE ----
+function renderClerkDeleteTable(){
+  const tbody = document.getElementById('clerkDeleteTable');
+  if(!tbody) return;
+  tbody.innerHTML = records.map(r=>`<tr>
+    <td style="font-weight:600;color:var(--text)">${r.survey}</td>
+    <td>${r.owner}</td>
+    <td>${r.district}</td>
+    <td>${r.crop}</td>
+    <td><span class="badge ${r.status==='verified'?'badge-green':r.status==='pending'?'badge-warn':'badge-red'}">${r.status}</span></td>
+    <td>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;color:var(--warn)" onclick="softDeleteRecord('${r.survey}')"><i class="ti ti-eye-off"></i> Deactivate</button>
+    </td>
+  </tr>`).join('');
+}
+
+function softDeleteRecord(survey){
+  showToast(`Record ${survey} deactivated (soft delete). Officer approval required to restore.`,'warn',4000);
+}
+
+// ---- CLERK: FORMS ----
+function renderClerkForms(){
+  // Form 1
+  const f1 = document.getElementById('form1Table');
+  if(f1) f1.innerHTML = [
+    {id:'F1-0091',farmer:'Ramaiah K.',survey:'MYS-4421',date:'May 8',status:'Submitted'},
+    {id:'F1-0090',farmer:'Anjamma S.',survey:'KLR-882',date:'May 7',status:'Pending'},
+    {id:'F1-0089',farmer:'Meena P.',survey:'HSN-2251',date:'May 6',status:'Submitted'},
+  ].map(f=>`<tr>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${f.id}</td>
+    <td>${f.farmer}</td>
+    <td>${f.survey}</td>
+    <td style="font-size:12px;color:var(--text3)">${f.date}</td>
+    <td><span class="badge ${f.status==='Submitted'?'badge-green':'badge-warn'}">${f.status}</span></td>
+    <td>
+      <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="showToast('Form ${f.id} opened for editing','info')"><i class="ti ti-edit"></i> Edit</button>
+    </td>
+  </tr>`).join('');
+
+  // Form 2
+  const f2 = document.getElementById('form2Table');
+  if(f2) f2.innerHTML = [
+    {id:'F2-0044',survey:'KLR-882',old:'Wheat',nw:'Ragi',date:'May 8',status:'Submitted'},
+    {id:'F2-0043',survey:'BGR-3301',old:'Paddy',nw:'Cotton',date:'May 6',status:'Pending'},
+  ].map(f=>`<tr>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${f.id}</td>
+    <td>${f.survey}</td>
+    <td style="color:var(--danger)">${f.old}</td>
+    <td style="color:var(--accent)">${f.nw}</td>
+    <td style="font-size:12px;color:var(--text3)">${f.date}</td>
+    <td><span class="badge ${f.status==='Submitted'?'badge-green':'badge-warn'}">${f.status}</span></td>
+  </tr>`).join('');
+
+  // Corrections
+  const corr = document.getElementById('corrTable');
+  if(corr) corr.innerHTML = [
+    {id:'CRR-019',survey:'BGR-7701',field:'Area',change:'6.1 → 6.3 acres',status:'Pending'},
+    {id:'CRR-018',survey:'MYS-8822',field:'Village',change:'T. Narsipur (spelling)',status:'Approved'},
+  ].map(c=>`<tr>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${c.id}</td>
+    <td>${c.survey}</td>
+    <td>${c.field}</td>
+    <td style="font-size:12px;color:var(--text2)">${c.change}</td>
+    <td><span class="badge ${c.status==='Approved'?'badge-green':'badge-warn'}">${c.status}</span></td>
+  </tr>`).join('');
+}
+
+function switchFormTab(el, tabId){
+  document.querySelectorAll('#screen-clerk-forms .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['form1Tab','form2Tab','corrTab'].forEach(id=>{
+    const el2 = document.getElementById(id);
+    if(el2) el2.style.display = id===tabId?'block':'none';
+  });
+}
+
+// ---- CLERK: HISTORY ----
+function renderClerkHistory(){
+  const tbody = document.getElementById('clerkHistoryTable');
+  if(!tbody) return;
+  tbody.innerHTML = [
+    {action:'Crop Updated',record:'KLR-882',change:'Wheat → Ragi',time:'May 8 · 10:21 AM'},
+    {action:'Form 2 Submitted',record:'BGR-3301',change:'Paddy → Cotton',time:'May 8 · 09:44 AM'},
+    {action:'Area Corrected',record:'BGR-7701',change:'6.1 → 6.3 acres',time:'May 7 · 03:10 PM'},
+    {action:'Form 1 Submitted',record:'MYS-4421',change:'New registration',time:'Jan 1 · 09:00 AM'},
+  ].map(h=>`<tr>
+    <td style="font-weight:600;color:var(--text)">${h.action}</td>
+    <td style="font-family:monospace;font-size:12px;color:var(--accent)">${h.record}</td>
+    <td style="font-size:12px;color:var(--text2)">${h.change}</td>
+    <td style="font-size:11px;color:var(--text3)">${h.time}</td>
+  </tr>`).join('');
+}
+
+// ---- FARMER: FULL NOTIFICATIONS ----
+function renderFarmerNotifsFull(){
+  const div = document.getElementById('farmerNotifsFull');
+  if(!div) return;
+  div.innerHTML = [
+    {time:'May 8, 11:42 PM',msg:'Your record MYS-4421 crop type was modified to Sugarcane by Revenue Officer.',type:'warn'},
+    {time:'May 8, 10:42 AM',msg:'Record MYS-4421 verified and approved by Revenue Officer OFF-012 (Priya Venkat).',type:'success'},
+    {time:'May 8, 10:00 AM',msg:'Suspicious activity detected on your record — flagged for review.',type:'warn'},
+    {time:'Mar 12, 3:14 PM',msg:'Area updated from 3.0 to 3.2 acres — Kolar sub-office.',type:'info'},
+    {time:'Feb 1, 11:00 AM',msg:'Insurance policy PMFBY renewed successfully for MYS-4421.',type:'success'},
+    {time:'Jan 1, 9:00 AM',msg:'Your land record was officially registered in the AgriShield system.',type:'success'},
+  ].map(n=>`<div class="farmer-notif">
+    <div class="live-dot" style="background:${n.type==='success'?'var(--accent)':n.type==='warn'?'var(--warn)':'var(--info)'};flex-shrink:0;margin-top:4px"></div>
+    <div>
+      <div style="font-size:13px;color:var(--text)">${n.msg}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">${n.time}</div>
+    </div>
+  </div>`).join('');
+}
+
+// ---- MOBILE SIDEBAR ----
+function toggleSidebar(){
+  document.querySelector('.sidebar').classList.toggle('open');
+}
+
+// ---- LOGIN ----
+let mfaShown = false;
+function showMFA(){
+  document.getElementById('mfaBox').style.display = 'block';
+  mfaShown = true;
+}
+function otpNext(el, idx){
+  if(el.value && idx < 5) document.getElementById('o'+(idx+1)).focus();
+}
+let currentRole = 'admin';
+
+function doLogin(){
+  currentRole = document.getElementById('loginRole').value;
+  const roleNames = {admin:'System Admin',officer:'Revenue Officer',clerk:'Data Entry Clerk',farmer:'Farmer'};
+  const initials = {admin:'AD',officer:'OF',clerk:'CL',farmer:'FM'};
+  const names = {admin:'Rajesh Naik',officer:'Priya Venkat',clerk:'Geetha S.',farmer:'Ramaiah K.'};
+  const shortNames = {admin:'Rajesh',officer:'Priya',clerk:'Geetha',farmer:'Ramaiah'};
+
+  document.getElementById('sidebarAvatar').textContent = initials[currentRole];
+  document.getElementById('topbarAvatar').textContent = initials[currentRole];
+  document.getElementById('sidebarName').textContent = names[currentRole];
+  document.getElementById('sidebarRole').textContent = roleNames[currentRole];
+  document.getElementById('topbarName').textContent = shortNames[currentRole];
+  document.getElementById('topbarRole').textContent = roleNames[currentRole];
+
+  // Hide all role navs first
+  ['navAdmin','navOfficer','navClerk','navFarmer'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+
+  // Show correct nav and navigate to role home
+  if(currentRole==='admin'){
+    document.getElementById('navAdmin').style.display='block';
+    navigate('dashboard',null);
+  } else if(currentRole==='officer'){
+    document.getElementById('navOfficer').style.display='block';
+    navigate('officer-dashboard',null);
+    renderFraud();
+    renderOfficerHistory();
+    renderOfficerNotifs();
+    renderApprovals();
+    renderFraudActionTable();
+  } else if(currentRole==='clerk'){
+    document.getElementById('navClerk').style.display='block';
+    navigate('clerk-dashboard',null);
+    renderClerkDeleteTable();
+    renderClerkForms();
+    renderClerkHistory();
+  } else if(currentRole==='farmer'){
+    document.getElementById('navFarmer').style.display='block';
+    navigate('farmer-dashboard',null);
+    renderFarmerPanel();
+    renderFarmerNotifsFull();
+  }
+
+  showScreen('appScreen');
+  showToast(`Welcome back, ${shortNames[currentRole]}! Session started.`,'success');
+}
+
+function showScreen(id){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='none';
+  document.getElementById(id).style.display = id==='appScreen'?'flex':'flex';
+}
+
+// ---- MODIFY FLOW ----
+function loadRecord(){
+  // Simulate loading state
+  const btn = event.target;
+  btn.innerHTML = '<span class="spinner"></span> Loading...';
+  btn.disabled = true;
+  setTimeout(()=>{
+    btn.innerHTML = '<i class="ti ti-search"></i> Load Record';
+    btn.disabled = false;
+    document.getElementById('recordPreviewCard').style.display='block';
+    document.getElementById('modifyFormCard').style.display='block';
+    showToast('Record MYS-4421 loaded — SHA-256 hash verified ✔','success');
+  },800);
+}
+function updatePreview(){
+  const newCrop = document.getElementById('newCrop').value;
+  document.getElementById('previewNewCrop').textContent = newCrop;
+}
+function showModifyConfirm(){
+  document.getElementById('modifyModal').style.display='flex';
+}
+function submitModify(){
+  document.getElementById('modifyModal').style.display='none';
+  // Generate hash and timestamp
+  const h = simHash('MYS-4421-'+Date.now());
+  document.getElementById('recordHash').textContent = h;
+  document.getElementById('sigTimestamp').textContent = new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  document.getElementById('successModal').style.display='flex';
+  showToast('Record modified and cryptographically signed ✔','success');
+}
+function closeModal(id){
+  document.getElementById(id).style.display='none';
+}
+function showAddUser(){
+  document.getElementById('addUserModal').style.display='flex';
+}
+
+// ---- LIVE FEED SIMULATION ----
+const liveMsgs = [
+  {color:'var(--accent)',msg:'Integrity scan passed for BGR-3301'},
+  {color:'var(--warn)',msg:'Unusual access pattern detected — OFF-034'},
+  {color:'var(--danger)',msg:'Modification attempt on flagged record KLR-993'},
+  {color:'var(--accent)',msg:'New audit log entry created — LOG-4893'},
+  {color:'var(--info)',msg:'Admin Rajesh Naik logged in from 10.0.0.1'},
+];
+let feedIdx = 0;
+function tickLiveFeed(){
+  const feed = document.getElementById('liveFeed');
+  if(!feed) return;
+  const entry = liveMsgs[feedIdx%liveMsgs.length];
+  feedIdx++;
+  const now = 'just now';
+  // shift older items
+  liveFeedData.unshift({color:entry.color,msg:entry.msg,time:now});
+  if(liveFeedData.length>10) liveFeedData.pop();
+  // Bump cmd metrics randomly
+  const attacks = document.getElementById('cmdLiveAttacks');
+  if(attacks && Math.random()>0.7){
+    const v = parseInt(attacks.textContent);
+    attacks.textContent = Math.max(0,v+(Math.random()>0.5?1:-1));
+  }
+  renderCommandCenter();
+}
+
+// ---- SEARCH ----
+document.addEventListener('DOMContentLoaded',()=>{
+  // Hide all role navs on load (login screen shown first)
+  ['navAdmin','navOfficer','navClerk','navFarmer'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+
+  renderRecords();
+  renderAudit();
+  renderUsers();
+  renderHistory();
+  renderHeatmap();
+  renderAllAlerts();
+  renderAnalytics();
+  renderFraud();
+
+  // Wire up live search
+  const searchInput = document.querySelector('#screen-records .search-bar input');
+  if(searchInput) searchInput.addEventListener('input', renderRecords);
+
+  // Live feed ticker
+  setInterval(tickLiveFeed, 4000);
+});
+</script>
+</body>
+</html>
