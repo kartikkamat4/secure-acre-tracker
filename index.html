@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriShield — Land Records Authority · Karnataka</title>
+<meta name="description" content="AgriShield: tamper-evident land records management for the Karnataka Land Records Authority.">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Root ────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #1a1a14;
+  --paper:    #f5f0e8;
+  --paper2:   #ede8dc;
+  --khaki:    #2d3b2a;
+  --khaki2:   #3d5038;
+  --amber:    #b8860b;
+  --amber2:   #d4a017;
+  --rust:     #9b3a2a;
+  --sage:     #5a7a52;
+  --mono:     'IBM Plex Mono', monospace;
+  --serif:    'Crimson Pro', Georgia, serif;
+  --sans:     'DM Sans', sans-serif;
+  --radius:   4px;
+  --border:   #c8bfa8;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── Utilities ───────────────────────────────────── */
+.hidden   { display: none !important; }
+.mono     { font-family: var(--mono); }
+.serif    { font-family: var(--serif); }
+
+/* ── Login ───────────────────────────────────────── */
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--khaki);
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, #ffffff08 39px, #ffffff08 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, #ffffff08 39px, #ffffff08 40px);
+}
+
+.login-box {
+  background: var(--paper);
+  border: 2px solid var(--khaki);
+  width: 380px;
+  padding: 0;
+  position: relative;
+}
+
+.login-header {
+  background: var(--khaki);
+  padding: 28px 32px 24px;
+  text-align: center;
+}
+
+.login-emblem {
+  width: 52px; height: 52px;
+  background: var(--amber);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 14px;
+  border: 3px solid var(--amber2);
+}
+
+.login-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--paper);
+  letter-spacing: 1px;
+}
+
+.login-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #a0b090;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.login-body { padding: 28px 32px; }
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6b6050;
+  margin-bottom: 6px;
+}
+.field input, .field select {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  background: #fffdf8;
+  padding: 9px 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  border-radius: var(--radius);
+  transition: border-color .15s;
+  appearance: none;
+}
+.field input:focus, .field select:focus { border-color: var(--amber); }
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.role-btn {
+  padding: 10px 8px;
+  border: 1.5px solid var(--border);
+  background: #fffdf8;
+  cursor: pointer;
+  border-radius: var(--radius);
+  text-align: center;
+  transition: all .15s;
+}
+.role-btn:hover { border-color: var(--amber); }
+.role-btn.selected { border-color: var(--khaki); background: var(--khaki); color: var(--paper); }
+.role-btn .ri { font-size: 18px; display: block; margin-bottom: 4px; }
+.role-btn span { font-size: 11px; font-family: var(--mono); }
+
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: var(--khaki);
+  color: var(--paper);
+  border: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background .15s;
+}
+.btn-login:hover { background: var(--khaki2); }
+
+.login-note {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: #9b9080;
+}
+
+/* ── App Shell ───────────────────────────────────── */
+#app { display: none; flex-direction: column; min-height: 100vh; }
+
+/* Topbar */
+.topbar {
+  background: var(--khaki);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 52px;
+  gap: 20px;
+  border-bottom: 3px solid var(--amber);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-brand {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin-right: 4px;
+}
+.topbar-divider { width: 1px; height: 20px; background: #4d6040; }
+.topbar-nav { display: flex; gap: 2px; flex: 1; }
+.nav-link {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: #a0b090;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all .15s;
+  letter-spacing: .5px;
+  border: none;
+  background: none;
+}
+.nav-link:hover { color: var(--paper); background: #3d5038; }
+.nav-link.active { color: var(--amber2); background: #1a2a17; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a2a17;
+  border: 1px solid #3d5038;
+  padding: 4px 12px 4px 6px;
+  border-radius: 20px;
+}
+.user-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--khaki);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--mono);
+  display: flex; align-items: center; justify-content: center;
+}
+.user-name { font-size: 12px; color: var(--paper); font-family: var(--mono); }
+.role-tag {
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--amber2);
+}
+.btn-logout {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-family: var(--mono);
+  background: transparent;
+  border: 1px solid #4d6040;
+  color: #a0b090;
+  cursor: pointer;
+  border-radius: var(--radius);
+  letter-spacing: 1px;
+  transition: all .15s;
+}
+.btn-logout:hover { border-color: var(--rust); color: #e07060; }
+
+/* ── Content ─────────────────────────────────────── */
+.content { flex: 1; padding: 28px 32px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+.view { display: none; }
+.view.active { display: block; }
+
+.view-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--khaki);
+  margin-bottom: 4px;
+}
+.view-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #9b9080;
+  letter-spacing: .5px;
+  margin-bottom: 24px;
+}
+
+/* ── Cards ───────────────────────────────────────── */
+.card {
+  background: #fffdf8;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6b6050;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Table ───────────────────────────────────────── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6b6050;
+  border-bottom: 2px solid var(--border);
+  background: var(--paper2);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd8cc;
+  color: var(--ink);
+  vertical-align: middle;
+}
+tbody tr:hover { background: #f5f0e4; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ── Badges ──────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .5px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.badge-green  { background: #d4edda; color: #2a6b3a; border: 1px solid #a8d8b4; }
+.badge-amber  { background: #fef3cd; color: #7a5e00; border: 1px solid #f0d880; }
+.badge-red    { background: #fde8e8; color: #8b2a2a; border: 1px solid #f0b8b8; }
+.badge-gray   { background: #e8e4dc; color: #5a5040; border: 1px solid #c8bfa8; }
+.badge-blue   { background: #ddeeff; color: #1a4a7a; border: 1px solid #a8ccee; }
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: .5px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .15s;
+}
+.btn-primary { background: var(--khaki); color: var(--paper); }
+.btn-primary:hover { background: var(--khaki2); }
+.btn-outline { background: transparent; border-color: var(--border); color: var(--ink); }
+.btn-outline:hover { border-color: var(--khaki); }
+.btn-danger  { background: var(--rust); color: #fff; }
+.btn-danger:hover { background: #7a2a1a; }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+
+/* ── Toolbar ─────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  background: #fffdf8;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  border-radius: var(--radius);
+}
+.search-input:focus { border-color: var(--amber); }
+
+/* ── Form ────────────────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #6b6050;
+}
+.form-field input, .form-field select {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  background: #fffdf8;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  border-radius: var(--radius);
+}
+.form-field input:focus, .form-field select:focus { border-color: var(--amber); }
+.form-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+/* ── Modal ───────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,26,20,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: var(--paper);
+  border: 2px solid var(--khaki);
+  width: 520px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--radius);
+}
+.modal-head {
+  background: var(--khaki);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-head h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--paper);
+}
+.modal-close {
+  cursor: pointer;
+  color: #a0b090;
+  font-size: 20px;
+  line-height: 1;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.modal-close:hover { color: var(--paper); }
+.modal-body { padding: 20px; }
+
+/* ── Toast ───────────────────────────────────────── */
+#toastArea {
+  position: fixed;
+  top: 16px; right: 16px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--khaki);
+  color: var(--paper);
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 12px;
+  border-left: 4px solid var(--amber);
+  animation: slideIn .25s ease;
+  max-width: 320px;
+}
+.toast.err { border-left-color: #d06050; }
+@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+/* ── Hash display ────────────────────────────────── */
+.hash-row {
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--khaki);
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+
+/* ── Verify result ───────────────────────────────── */
+.verify-result {
+  padding: 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  border: 2px solid;
+}
+.verify-ok   { background: #d4edda; color: #1a4a2a; border-color: #a8d8b4; }
+.verify-fail { background: #fde8e8; color: #6b1a1a; border-color: #f0b8b8; }
+
+/* ── Stats strip ─────────────────────────────────── */
+.stats-strip {
+  display: flex;
+  gap: 1px;
+  margin-bottom: 24px;
+  background: var(--border);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.stat {
+  flex: 1;
+  padding: 14px 18px;
+  background: #fffdf8;
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--khaki);
+  line-height: 1;
+}
+.stat-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9b9080;
+  margin-top: 4px;
+}
+
+/* ── Alert items ─────────────────────────────────── */
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fffdf8;
+  border: 1.5px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+.alert-card.sev-high   { border-left-color: var(--rust); }
+.alert-card.sev-medium { border-left-color: var(--amber); }
+.alert-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.alert-icon.high   { background: #fde8e8; }
+.alert-icon.medium { background: #fef3cd; }
+.alert-body { flex: 1; }
+.alert-title { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+.alert-desc  { font-size: 12px; color: #5a5040; line-height: 1.5; }
+.alert-meta  { font-family: var(--mono); font-size: 10px; color: #9b9080; margin-top: 5px; }
+.nav-badge-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--rust);
+  border-radius: 50%;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* ── Empty state ─────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: #9b9080;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; }
+
+/* ── Access denied ───────────────────────────────── */
+.access-denied {
+  text-align: center;
+  padding: 80px 24px;
+}
+.access-denied h2 { font-family: var(--serif); font-size: 32px; color: var(--rust); margin-bottom: 8px; }
+.access-denied p { font-family: var(--mono); font-size: 12px; color: #9b9080; }
+
+/* ── Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--paper2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Focus ring ──────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: var(--radius); }
+
+/* ── Loading Overlay ─────────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,26,20,.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500;
+  backdrop-filter: blur(2px);
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(200,191,168,.3);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Demo Banner ─────────────────────────────────── */
+.demo-banner {
+  background: #fef3cd;
+  border-bottom: 2px solid var(--amber);
+  padding: 7px 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .5px;
+  color: #7a5e00;
+  text-align: center;
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .topbar { height: auto; flex-wrap: wrap; padding: 8px 16px; gap: 8px; }
+  .topbar-nav { order: 3; width: 100%; overflow-x: auto; padding-bottom: 4px; }
+  .topbar-brand { font-size: 16px; }
+  .topbar-right { margin-left: auto; }
+  .content { padding: 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .stats-strip { flex-direction: column; gap: 0; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .search-input { min-width: unset; }
+  .modal { width: 95vw; }
+  tbody td, thead th { padding: 8px; font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .role-grid { grid-template-columns: 1fr !important; }
+  .login-box { width: 95vw; }
+}
+</style>
+</head>
+<body>
+
+<div id="toastArea"></div>
+<div id="loadingOverlay" class="loading-overlay hidden" role="status" aria-label="Loading"><div class="spinner"></div></div>
+<div id="demoBanner" class="demo-banner hidden">⚠ DEMO MODE — Backend unreachable. Showing sample data only.</div>
+
+<!-- ════════════════════════════════════════════════
+     LOGIN
+═════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-header">
+      <div class="login-emblem">🌾</div>
+      <div class="login-title">AgriShield</div>
+      <div class="login-sub">Land Records Authority · Karnataka</div>
+    </div>
+    <div class="login-body">
+      <div class="field">
+        <label>Login As</label>
+        <div class="role-grid" id="roleGrid" style="grid-template-columns:1fr 1fr 1fr">
+          <button class="role-btn selected" data-role="officer" onclick="selectRole(this)">
+            <span class="ri">📋</span><span>Revenue Officer</span>
+          </button>
+          <button class="role-btn" data-role="clerk" onclick="selectRole(this)">
+            <span class="ri">🖊️</span><span>Data Entry Clerk</span>
+          </button>
+          <button class="role-btn" data-role="farmer" onclick="selectRole(this)">
+            <span class="ri">🌾</span><span>Farmer</span>
+          </button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Employee / Farmer ID</label>
+        <input id="loginId" type="text" placeholder="e.g. ADM-001" value="ADM-001">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <button class="btn-login" onclick="doLogin()">Enter Portal</button>
+      <div class="login-note">All sessions are logged and audited</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     APP
+═════════════════════════════════════════════════ -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-brand">AgriShield</div>
+    <div class="topbar-divider"></div>
+    <nav class="topbar-nav" id="topNav"></nav>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="uAvatar">AD</div>
+        <div>
+          <div class="user-name" id="uName">Admin</div>
+          <div class="role-tag" id="uRole">System Admin</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">↩ Logout</button>
+    </div>
+  </div>
+
+  <!-- Views -->
+  <div class="content">
+
+    <!-- ── Records ─────────────────────────── -->
+    <div id="view-records" class="view active">
+      <div class="view-title">Land Records</div>
+      <div class="view-sub" id="recordsSubtitle">Registry · Karnataka</div>
+
+      <div class="stats-strip" id="statsStrip">
+        <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-lbl">Total</div></div>
+        <div class="stat"><div class="stat-num" id="statVerified">—</div><div class="stat-lbl">Verified</div></div>
+        <div class="stat"><div class="stat-num" id="statPending">—</div><div class="stat-lbl">Pending</div></div>
+        <div class="stat"><div class="stat-num" id="statFlagged">—</div><div class="stat-lbl">Flagged</div></div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <input class="search-input" id="recordSearch" placeholder="Search survey no., owner, village…" oninput="renderRecords()">
+          <select id="statusFilter" class="search-input" style="flex:0;width:140px" onchange="renderRecords()">
+            <option value="">All Status</option>
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="flagged">Flagged</option>
+          </select>
+          <!-- Admin/Officer/Clerk only -->
+          <button class="btn btn-primary" id="btnAddRecord" onclick="openAddModal()">+ New Record</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Survey No.</th>
+                <th>Owner</th>
+                <th>District</th>
+                <th>Village</th>
+                <th>Crop</th>
+                <th>Area (ac)</th>
+                <th>Integrity</th>
+                <th>Status</th>
+                <th id="actionsHead">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Audit Logs ──────────────────────── -->
+    <div id="view-audit" class="view">
+      <div class="view-title">Audit Log</div>
+      <div class="view-sub">Tamper-evident hash chain · all record modifications</div>
+      <div class="card">
+        <div class="toolbar">
+          <input class="search-input" id="auditSearch" placeholder="Search user, action, record…" oninput="renderAudit()">
+          <button class="btn btn-outline btn-sm" onclick="loadAudit()">↺ Refresh</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Record</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+                <th>Prev. Hash</th>
+                <th>Curr. Hash</th>
+              </tr>
+            </thead>
+            <tbody id="auditTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Alerts (Officer only) ─────────── -->
+    <div id="view-alerts" class="view">
+      <div class="view-title">Alerts</div>
+      <div class="view-sub">Flagged records and integrity issues pulled from the registry</div>
+      <div id="alertsList"></div>
+    </div>
+
+    <!-- ── Verify Chain ───────────────────── -->
+    <div id="view-verify" class="view">
+      <div class="view-title">Hash Chain Verification</div>
+      <div class="view-sub">Detects any tampering in the audit log sequence</div>
+      <div class="card" style="max-width:560px">
+        <div class="card-title">Run Verification</div>
+        <p style="font-size:13px;color:#5a5040;margin-bottom:16px;line-height:1.6">
+          Each audit log entry is hashed with the previous entry's hash, forming a chain.
+          Any external tampering breaks the chain and is detected here.
+        </p>
+        <button class="btn btn-primary" id="btnVerify" onclick="runVerify()">▶ Verify Chain Now</button>
+        <div id="verifyResult" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- ════════════════════════════════════════════════
+     MODALS
+═════════════════════════════════════════════════ -->
+
+<!-- Add / Edit Record -->
+<div class="modal-overlay hidden" id="recordModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="recordModalTitle">New Land Record</h3>
+      <button class="modal-close" onclick="closeModal('recordModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Owner Name</label>
+          <input id="f_owner" placeholder="e.g. Ramaiah K.">
+        </div>
+        <div class="form-field">
+          <label>Survey Number</label>
+          <input id="f_survey" placeholder="e.g. MYS-4421">
+        </div>
+        <div class="form-field">
+          <label>Village</label>
+          <input id="f_village" placeholder="e.g. Hullahalli">
+        </div>
+        <div class="form-field">
+          <label>District</label>
+          <select id="f_district">
+            <option>Mysuru</option>
+            <option>Kolar</option>
+            <option>Hassan</option>
+            <option>Bengaluru Rural</option>
+            <option>Bidar</option>
+            <option>Dakshina Kannada</option>
+            <option>Shivamogga</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Crop Type</label>
+          <select id="f_crop">
+            <option>Paddy</option>
+            <option>Sugarcane</option>
+            <option>Cotton</option>
+            <option>Ragi</option>
+            <option>Wheat</option>
+            <option>Coffee</option>
+            <option>Arecanut</option>
+            <option>Sorghum</option>
+            <option>Tur Dal</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Area (acres)</label>
+          <input id="f_area" type="number" step="0.1" placeholder="e.g. 3.2">
+        </div>
+        <div class="form-field">
+          <label>Status</label>
+          <select id="f_status">
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="flagged">Flagged</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="recordSubmitBtn" onclick="submitRecord()">Save Record</button>
+        <button class="btn btn-outline" onclick="closeModal('recordModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transfer Ownership (Officer/Clerk) -->
+<div class="modal-overlay hidden" id="transferModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Transfer Ownership</h3>
+      <button class="modal-close" onclick="closeModal('transferModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#5a5040;margin-bottom:14px">
+        Record: <strong id="transferSurvey" style="font-family:var(--mono)"></strong>
+        &nbsp;·&nbsp; Current owner: <strong id="transferCurrentOwner"></strong>
+      </p>
+      <div class="form-field">
+        <label>New Owner Name</label>
+        <input id="transferNewOwner" placeholder="Enter new owner's full name">
+      </div>
+      <div style="background:var(--paper2);border:1px solid var(--border);padding:10px 12px;margin-top:12px;font-size:12px;color:#7a5e20;font-family:var(--mono);border-radius:var(--radius)">
+        ⚠ This action is cryptographically logged and cannot be undone.
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="submitTransfer()">Confirm Transfer</button>
+        <button class="btn btn-outline" onclick="closeModal('transferModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+const API = 'http://127.0.0.1:8000';
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let currentRole = 'officer';
+let currentUser = { id: 'OFF-012', name: 'Priya Venkat', initials: 'PV' };
+let allRecords       = [];
+let allAudit         = [];
+let editingRecordId  = null;
+let transferRecordId = null;
+let isDemoMode       = false;
+let _loadCount       = 0;
+
+// ══════════════════════════════════════════════════════
+//  ROLE CONFIG — what each role can see and do
+// ══════════════════════════════════════════════════════
+const ROLES = {
+
+  officer: {
+
+    label: 'Revenue Officer',
+
+    nav: ['records', 'alerts', 'audit', 'verify'],
+
+    canCreate: true,
+
+    canTransfer: true,
+
+    canVerify: true,
+
+    farmerOnly: false,
+  },
+
+
+  clerk: {
+
+    label: 'Data Entry Clerk',
+
+    nav: ['records'],
+
+    canCreate: true,
+
+    canTransfer: true,
+
+    canVerify: false,
+
+    farmerOnly: false,
+  },
+
+
+  farmer: {
+
+    label: 'Farmer',
+
+    nav: ['records'],
+
+    canCreate: false,
+
+    canTransfer: false,
+
+    canVerify: false,
+
+    farmerOnly: true,
+  },
+};
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+/** Escape HTML to prevent XSS when injecting into innerHTML */
+function esc(val) {
+  if (val == null || val === '') return '—';
+  const d = document.createElement('div');
+  d.textContent = String(val);
+  return d.innerHTML;
+}
+
+/** Show/hide the full-page loading spinner */
+function setLoading(on) {
+  _loadCount = Math.max(0, _loadCount + (on ? 1 : -1));
+  document.getElementById('loadingOverlay').classList.toggle('hidden', _loadCount === 0);
+}
+
+/** Show/hide the demo-mode warning banner */
+function setDemoMode(on) {
+  isDemoMode = on;
+  document.getElementById('demoBanner').classList.toggle('hidden', !on);
+}
+
+/** Copy text to clipboard with a toast confirmation */
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Hash copied')).catch(() => toast('Copy failed', true));
+}
+
+// ══════════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════════
+function selectRole(btn) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentRole = btn.dataset.role;
+  const defaults = {
+    officer: { id:'OFF-012',  name:'Priya Venkat',  initials:'PV' },
+    clerk:   { id:'CLK-003',  name:'Geetha S.',     initials:'GS' },
+    farmer:  { id:'FMR-1021', name:'Ramaiah K.',    initials:'RK' },
+  };
+  const d = defaults[currentRole];
+  document.getElementById('loginId').value = d.id;
+  currentUser = d;
+}
+
+function doLogin() {
+  const id   = document.getElementById('loginId').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  if (!id || !pass) { toast('Enter credentials', true); return; }
+
+  // currentUser was already set by selectRole(); just update the id
+  currentUser.id = id;
+
+  // Build nav
+  const role = ROLES[currentRole];
+  const nav  = document.getElementById('topNav');
+  nav.innerHTML = role.nav.map(v =>
+    `<button class="nav-link ${v==='records'?'active':''}" data-view="${v}" onclick="switchView('${v}',this)">${NAV_LABELS[v]}</button>`
+  ).join('');
+
+  // Set user pill
+  document.getElementById('uAvatar').textContent = currentUser.initials;
+  document.getElementById('uName').textContent   = currentUser.name;
+  document.getElementById('uRole').textContent   = role.label;
+
+  // Role-based UI tweaks
+  if (role.farmerOnly) {
+    document.getElementById('recordsSubtitle').textContent = 'Your registered land records';
+    document.getElementById('btnAddRecord').classList.add('hidden');
+    document.getElementById('actionsHead').classList.add('hidden');
+  } else {
+    document.getElementById('recordsSubtitle').textContent = 'Registry · Karnataka';
+    document.getElementById('btnAddRecord').classList.toggle('hidden', !role.canCreate);
+    document.getElementById('actionsHead').classList.remove('hidden');
+  }
+
+  // Show app
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.flexDirection = 'column';
+
+  loadRecords();
+  toast(`Welcome, ${currentUser.name}`);
+}
+function logout() {
+
+  document.getElementById('app').style.display = 'none';
+
+  document.getElementById('loginScreen').style.display = 'flex';
+
+  document.getElementById('loginPass').value = '';
+}
+
+
+const NAV_LABELS = {
+
+  records: 'Records',
+
+  alerts: 'Alerts',
+
+  audit: 'Audit Log',
+
+  verify: 'Verify Chain'
+};
+
+
+function switchView(view, btn) {
+
+  document.querySelectorAll('.view').forEach(v =>
+    v.classList.remove('active')
+  );
+
+  document.getElementById(`view-${view}`)
+    .classList.add('active');
+
+  document.querySelectorAll('.nav-link').forEach(n =>
+    n.classList.remove('active')
+  );
+
+  btn.classList.add('active');
+
+  if (view === 'audit') {
+
+    loadAudit();
+  }
+}
+async function loadRecords() {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API}/records`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    allRecords = await res.json();
+    setDemoMode(false);
+  } catch(e) {
+    toast('Cannot reach backend — showing demo data', true);
+    setDemoMode(true);
+    allRecords = [
+      { id:1, survey:'MYS-4421', owner:'Ramaiah K.',   district:'Mysuru',          village:'Hullahalli',  crop:'Paddy',   area:3.2, status:'verified', integrity:true  },
+      { id:2, survey:'KLR-993',  owner:'Narasimha G.', district:'Kolar',           village:'Malur',       crop:'Ragi',    area:2.8, status:'flagged',  integrity:false },
+      { id:3, survey:'BGR-3301', owner:'Ahmed Khan',   district:'Bengaluru Rural', village:'Devanahalli', crop:'Paddy',   area:4.1, status:'verified', integrity:true  },
+      { id:4, survey:'HSN-1190', owner:'Prabhu S.',    district:'Hassan',          village:'Belur',       crop:'Paddy',   area:6.0, status:'flagged',  integrity:true  },
+      { id:5, survey:'BDR-501',  owner:'Irfan M.',     district:'Bidar',           village:'Bidar City',  crop:'Sorghum', area:2.2, status:'verified', integrity:true  },
+      { id:6, survey:'KLR-882',  owner:'Geetha Bai',   district:'Kolar',           village:'Bangarpet',   crop:'Wheat',   area:1.5, status:'pending',  integrity:true  },
+    ];
+  } finally {
+    setLoading(false);
+  }
+  updateStats();
+  renderRecords();
+  if (currentRole === 'officer') renderAlerts();
+}
+
+function updateStats() {
+  const src = ROLES[currentRole].farmerOnly
+    ? allRecords.filter(r => r.owner.includes(currentUser.name.split(' ')[0]))
+    : allRecords;
+  document.getElementById('statTotal').textContent    = src.length;
+  document.getElementById('statVerified').textContent = src.filter(r=>r.status==='verified').length;
+  document.getElementById('statPending').textContent  = src.filter(r=>r.status==='pending').length;
+  document.getElementById('statFlagged').textContent  = src.filter(r=>r.status==='flagged').length;
+}
+
+function renderRecords() {
+  const q   = document.getElementById('recordSearch')?.value.toLowerCase() || '';
+  const st  = document.getElementById('statusFilter')?.value || '';
+  const role = ROLES[currentRole];
+
+  let rows = allRecords;
+
+  // Farmer sees only their records (match by full name)
+  if (role.farmerOnly) {
+    const farmerName = currentUser.name.toLowerCase().trim();
+    rows = rows.filter(r => {
+      const owner = (r.owner || r.owner_name || '').toLowerCase().trim();
+      return owner === farmerName || owner.includes(farmerName.split(' ')[0]);
+    });
+  }
+
+  if (q)  rows = rows.filter(r =>
+    (r.survey||'').toLowerCase().includes(q) ||
+    (r.owner||'').toLowerCase().includes(q)  ||
+    (r.village||'').toLowerCase().includes(q)||
+    (r.district||'').toLowerCase().includes(q)
+  );
+  if (st) rows = rows.filter(r => r.status === st);
+
+  const tbody = document.getElementById('recordsTbody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">📄</div>No records found</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td class="mono" style="font-weight:600;color:var(--khaki)">${r.survey||r.survey_number||'—'}</td>
+      <td>${r.owner||r.owner_name||'—'}</td>
+      <td>${r.district||'—'}</td>
+      <td>${r.village||'—'}</td>
+      <td>${r.crop||r.crop_type||'—'}</td>
+      <td>${r.area||'—'}</td>
+      <td>${r.integrity
+        ? `<span class="badge badge-green">✓ OK</span>`
+        : `<span class="badge badge-red">✗ Tampered</span>`}
+      </td>
+      <td><span class="badge ${r.status==='verified'?'badge-green':r.status==='pending'?'badge-amber':'badge-red'}">${r.status}</span></td>
+      <td ${role.farmerOnly ? 'class="hidden"' : ''}>
+        <div style="display:flex;gap:6px">
+          ${role.canTransfer ? `<button class="btn btn-outline btn-sm" onclick="openTransferModal(${r.id},'${(r.survey||r.survey_number||'').replace(/'/g,"\\'")}','${(r.owner||r.owner_name||'').replace(/'/g,"\\'")}')">Transfer</button>` : ''}
+          ${!role.canTransfer ? '<span style="color:#ccc;font-size:11px;font-family:var(--mono)">read-only</span>' : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── Add / Edit Record ─────────────────────────────
+function openAddModal() {
+  editingRecordId = null;
+  document.getElementById('recordModalTitle').textContent = 'New Land Record';
+  ['f_owner','f_survey','f_area'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f_status').value = 'verified';
+  document.getElementById('recordModal').classList.remove('hidden');
+}
+
+async function submitRecord() {
+  const owner   = document.getElementById('f_owner').value.trim();
+  const survey  = document.getElementById('f_survey').value.trim();
+  const village = document.getElementById('f_village').value.trim();
+  const district= document.getElementById('f_district').value;
+  const crop    = document.getElementById('f_crop').value;
+  const area    = parseFloat(document.getElementById('f_area').value);
+  const status  = document.getElementById('f_status').value;
+
+  if (!owner || !survey || !village || !area) { toast('Fill all fields', true); return; }
+
+  setLoading(true);
+  try {
+    const url = `${API}/create-record?owner_name=${encodeURIComponent(owner)}&survey_number=${encodeURIComponent(survey)}&village=${encodeURIComponent(village)}&district=${encodeURIComponent(district)}&crop_type=${encodeURIComponent(crop)}&area=${area}&status=${status}`;
+    const res  = await fetch(url, { method: 'POST' });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    toast('Record saved');
+    closeModal('recordModal');
+    await loadRecords();
+  } catch(e) {
+    toast('Backend error — record not saved', true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ── Transfer Ownership ────────────────────────────
+function openTransferModal(id, survey, owner) {
+  transferRecordId = id;
+  document.getElementById('transferSurvey').textContent      = survey;
+  document.getElementById('transferCurrentOwner').textContent = owner;
+  document.getElementById('transferNewOwner').value = '';
+  document.getElementById('transferModal').classList.remove('hidden');
+}
+
+async function submitTransfer() {
+  const newOwner = document.getElementById('transferNewOwner').value.trim();
+  if (!newOwner) { toast('Enter new owner name', true); return; }
+  setLoading(true);
+  try {
+    const res  = await fetch(`${API}/update-record?record_id=${transferRecordId}&new_owner=${encodeURIComponent(newOwner)}&user_id=${encodeURIComponent(currentUser.id)}`, { method:'POST' });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    toast('Ownership transferred & audit log updated');
+    closeModal('transferModal');
+    await loadRecords();
+  } catch(e) {
+    toast('Transfer failed', true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  ALERTS (Officer only — derived from real record data)
+// ══════════════════════════════════════════════════════
+function renderAlerts() {
+  const tampered = allRecords.filter(r => r.integrity === false);
+  const flagged  = allRecords.filter(r => r.status === 'flagged');
+  const pending  = allRecords.filter(r => r.status === 'pending');
+
+  const alerts = [
+    ...tampered.map(r => ({
+      sev:   'high',
+      icon:  '🔴',
+      title: `Tampered Record — ${esc(r.survey || r.survey_number)}`,
+      desc:  `SHA-256 hash mismatch detected. Record owned by ${esc(r.owner || r.owner_name)} (${esc(r.district)}) may have been modified outside the system.`,
+      meta:  `Survey: ${esc(r.survey || r.survey_number)} · Village: ${esc(r.village)}`,
+    })),
+    ...flagged.map(r => ({
+      sev:   'high',
+      icon:  '⚑',
+      title: `Flagged Record — ${esc(r.survey || r.survey_number)}`,
+      desc:  `This record has been marked as flagged and requires review. Owner: ${esc(r.owner || r.owner_name)}, ${esc(r.district)}.`,
+      meta:  `Survey: ${esc(r.survey || r.survey_number)} · Crop: ${esc(r.crop || r.crop_type)} · ${esc(r.area)} acres`,
+    })),
+    ...pending.map(r => ({
+      sev:   'medium',
+      icon:  '⏳',
+      title: `Pending Approval — ${esc(r.survey || r.survey_number)}`,
+      desc:  `Record for ${esc(r.owner || r.owner_name)} in ${esc(r.village)}, ${esc(r.district)} is awaiting officer verification.`,
+      meta:  `Survey: ${esc(r.survey || r.survey_number)} · Crop: ${esc(r.crop || r.crop_type)}`,
+    })),
+  ];
+
+  // Update nav badge dot
+  const alertNavBtn = document.querySelector('[data-view="alerts"]');
+  if (alertNavBtn) {
+    const dot = alertNavBtn.querySelector('.nav-badge-dot');
+    if (alerts.length > 0 && !dot) {
+      alertNavBtn.insertAdjacentHTML('beforeend', `<span class="nav-badge-dot"></span>`);
+    } else if (alerts.length === 0 && dot) {
+      dot.remove();
+    }
+  }
+
+  const el = document.getElementById('alertsList');
+  if (!alerts.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">✅</div>No active alerts — all records look clean</div>`;
+    return;
+  }
+
+  el.innerHTML = alerts.map(a => `
+    <div class="alert-card sev-${a.sev}">
+      <div class="alert-icon ${a.sev}">${a.icon}</div>
+      <div class="alert-body">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+        <div class="alert-meta">${a.meta}</div>
+      </div>
+      <span class="badge ${a.sev === 'high' ? 'badge-red' : 'badge-amber'}">${a.sev}</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  AUDIT LOG
+// ══════════════════════════════════════════════════════
+async function loadAudit() {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API}/logs`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    allAudit = await res.json();
+  } catch(e) {
+    allAudit = [];
+    toast('Could not load audit logs', true);
+  } finally {
+    setLoading(false);
+  }
+  renderAudit();
+}
+
+function renderAudit() {
+  const q = document.getElementById('auditSearch')?.value.toLowerCase() || '';
+  let rows = allAudit;
+  if (q) rows = rows.filter(l =>
+    (l.user_id||'').toLowerCase().includes(q)      ||
+    (l.action_type||'').toLowerCase().includes(q)  ||
+    (l.record_id||'').toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('auditTbody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div>No log entries</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(l => {
+    const prevHash = l.previous_hash || '';
+    const currHash = l.current_hash  || '';
+    const ts       = l.created_at || l.timestamp || '';
+    return `
+    <tr>
+      <td class="mono" style="color:var(--amber);font-size:11px">#${esc(l.id)}</td>
+      <td class="mono" style="font-size:10px;color:#9b9080">${ts ? esc(ts.replace('T',' ').slice(0,16)) : '—'}</td>
+      <td class="mono" style="font-size:12px">${esc(l.user_id)}</td>
+      <td><span class="badge badge-gray">${esc(l.action_type)}</span></td>
+      <td class="mono" style="font-size:12px">${esc(l.record_id)}</td>
+      <td style="color:var(--rust);font-size:12px">${esc(l.old_data)}</td>
+      <td style="color:var(--sage);font-size:12px">${esc(l.new_data)}</td>
+      <td class="mono" style="font-size:10px;color:#9b9080">
+        <span title="${esc(prevHash)}" style="cursor:pointer" onclick="copyText('${prevHash.replace(/'/g,'\\')}')">
+          ${esc(prevHash.slice(0,12))}…
+        </span>
+      </td>
+      <td class="mono" style="font-size:10px;color:var(--amber)">
+        <span title="${esc(currHash)}" style="cursor:pointer" onclick="copyText('${currHash.replace(/'/g,'\\')}')">
+          ${esc(currHash.slice(0,12))}…
+        </span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  VERIFY CHAIN
+// ══════════════════════════════════════════════════════
+async function runVerify() {
+  const btn = document.getElementById('btnVerify');
+  btn.textContent = 'Verifying…';
+  btn.disabled = true;
+  document.getElementById('verifyResult').innerHTML = '';
+  try {
+    const res  = await fetch(`${API}/verify-chain`);
+    const data = await res.json();
+    const ok   = data.status === 'CHAIN VERIFIED';
+    document.getElementById('verifyResult').innerHTML = `
+      <div class="verify-result ${ok?'verify-ok':'verify-fail'}">
+        ${ok ? '✓ Chain Verified — No tampering detected' : `✗ ${data.status} — Log #${data.log_id||'?'}`}
+      </div>
+      ${data.log_id ? `<div class="hash-row" style="margin-top:12px">Failure at audit log entry <strong>#${data.log_id}</strong></div>` : ''}
+    `;
+    toast(ok ? 'Chain is intact' : 'Tampering detected!', !ok);
+  } catch(e) {
+    document.getElementById('verifyResult').innerHTML = `<div class="verify-result verify-fail">✗ Could not reach backend</div>`;
+    toast('Backend unreachable', true);
+  }
+  btn.textContent = '▶ Verify Chain Now';
+  btn.disabled = false;
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+function toast(msg, isErr=false) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (isErr ? ' err' : '');
+  el.textContent = msg;
+  document.getElementById('toastArea').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ══════════════════════════════════════════════════════
+//  EVENT LISTENERS (init once on page load)
+// ══════════════════════════════════════════════════════
+
+// Escape key closes any open modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden'));
+  }
+});
+
+// Delegated click handler for Transfer buttons (avoids inline onclick XSS)
+document.getElementById('recordsTbody').addEventListener('click', e => {
+  const btn = e.target.closest('.transfer-btn');
+  if (!btn) return;
+  transferRecordId = parseInt(btn.dataset.id, 10);
+  document.getElementById('transferSurvey').textContent      = btn.dataset.survey;
+  document.getElementById('transferCurrentOwner').textContent = btn.dataset.owner;
+  document.getElementById('transferNewOwner').value = '';
+  document.getElementById('transferModal').classList.remove('hidden');
+  document.getElementById('transferNewOwner').focus();
+});
+
+// Focus first input when a modal opens
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  const observer = new MutationObserver(() => {
+    if (!overlay.classList.contains('hidden')) {
+      const first = overlay.querySelector('input, select, button:not(.modal-close)');
+      if (first) first.focus();
+    }
+  });
+  observer.observe(overlay, { attributes: true, attributeFilter: ['class'] });
+});
+</script>
+</body>
+</html>
